@@ -1,13 +1,16 @@
-import React from "react";
+import React, { useContext } from "react";
 import { ErrorMessage, useFormik, yupToFormErrors } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import myContext from "../components/context";
 
 // import './Registation';
 const Login = () => {
   const navigate = useNavigate();
+  const {isLoggedIn, setLoggedIn} = useContext(myContext);
+
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -35,6 +38,7 @@ const Login = () => {
         );
           if (user) {
             toast.success("Login Successful!");
+            setLoggedIn(true)
             navigate("/");
           } else {
             toast.error("INVALID CREDENTIALS !");
@@ -44,8 +48,8 @@ const Login = () => {
     });
 
   return (
-    <div className="h-screen bg-sky-200 w-full flex justify-center items-center">
-      <div className="bg-sky-100 px-8 py-6 shadow-xl rounded-xl lg:px-16">
+    <div className="h-screen bg-indigo-50 w-full flex justify-center items-center">
+      <div className="bg-indigo-100 px-8 py-6 shadow-xl rounded-xl lg:px-16">
         <form onSubmit={formik.handleSubmit} className="flex flex-col gap-4">
           <h1 className="font-medium">LOGIN!</h1>
 

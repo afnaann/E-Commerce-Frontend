@@ -1,11 +1,25 @@
 {
   "users": [
     {
-      "id": "0b89",
-      "name": "afnan",
+      "id": "c191",
+      "name": "Afnan Pk",
       "email": "afnanpk8@gmail.com",
-      "password": "abc",
-      "confirmPassword": "abc"
+      "password": "a",
+      "confirmPassword": "a"
+    },
+    {
+      "id": "6c47",
+      "name": "Adnan ",
+      "email": "adnanadnu088@gmail.com",
+      "password": "q",
+      "confirmPassword": "q"
+    },
+    {
+      "id": "49cc",
+      "name": "Afnan Pk",
+      "email": "hashir@gmail.com",
+      "password": "a",
+      "confirmPassword": "a"
     }
   ]
 }
