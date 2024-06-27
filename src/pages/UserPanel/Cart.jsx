@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Dialog,
   DialogPanel,
@@ -7,30 +7,57 @@ import {
   TransitionChild,
 } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import myContext from "../components/context";
-import { useNavigate } from "react-router-dom";
 
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { toast } from "react-toastify";
+import myContext from "../../components/context";
 export default function Cart() {
   const [open, setOpen] = useState(true);
-  const { cart, setCart, isLoggedIn } = useContext(myContext);
+  const { cart, setCart, isLoggedIn, setTotal, total } = useContext(myContext);
   const navigate = useNavigate();
+  const loged = localStorage.getItem("credentials");
+  const id = localStorage.getItem("id");
+
+  let updatedCart;
+  useEffect(() => {
+    if (!loged) {
+      navigate("/");
+    }
+  }, []);
 
   const removerEvent = (productId) => {
-    const updatedCart = cart.filter((itm) => itm.id !== productId);
+    updatedCart = cart.filter((itm) => itm.id !== productId);
     setCart(updatedCart);
+    updateCartOnServer(updatedCart);
+    toast.success("Removed Item From Cart");
   };
 
   const updateQuantity = (productId, newQuantity) => {
-    const updatedCart = cart.map((product) =>
+    updatedCart = cart.map((product) =>
       product.id === productId ? { ...product, quantity: newQuantity } : product
     );
     setCart(updatedCart);
+    updateCartOnServer(updatedCart);
   };
 
-  const total = cart.reduce(
-    (acc, curr) => Number(acc) + Number(curr.price) * Number(curr.quantity),
-    0
-  );
+  useEffect(() => {
+    const amount = cart.reduce(
+      (acc, curr) => Number(acc) + Number(curr.price) * Number(curr.quantity),
+      0
+    );
+    setTotal(amount);
+  }, [cart, setTotal]);
+
+  const updateCartOnServer = async (updatedCart) => {
+    try {
+      await axios.patch(`http://localhost:8000/users/${id}`, {
+        cart: updatedCart,
+      });
+    } catch (error) {
+      console.error("Error updating cart data:", error);
+    }
+  };
 
   return (
     <div>
@@ -165,37 +192,40 @@ export default function Cart() {
                           </div>
                         </div>
                       </div>
-
-                      <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
-                        <div className="flex justify-between text-base font-medium text-gray-900">
-                          <p>Subtotal</p>
-                          <p>${total}</p>
-                        </div>
-                        <p className="mt-0.5 text-sm text-gray-500">
-                          Shipping and taxes calculated at checkout.
-                        </p>
-                        <div className="mt-6">
-                          <a
-                            href="/checkout"
-                            className="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
-                          >
-                            Checkout
-                          </a>
-                        </div>
-                        <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
-                          <p>
-                            or{" "}
-                            <button
-                              type="button"
-                              className="font-medium text-indigo-600 hover:text-indigo-500"
-                              onClick={() => navigate("/shop")}
-                            >
-                              Continue Shopping
-                              <span aria-hidden="true"> &rarr;</span>
-                            </button>
+                      {cart.length >0 ? (
+                        <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
+                          <div className="flex justify-between text-base font-medium text-gray-900">
+                            <p>Subtotal</p>
+                            <p>${total}</p>
+                          </div>
+                          <p className="mt-0.5 text-sm text-gray-500">
+                            Shipping and taxes calculated at checkout.
                           </p>
+                          <div className="mt-6">
+                            <Link
+                              to={"/checkout"}
+                              className="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
+                            >
+                              Checkout
+                            </Link>
+                          </div>
+                          <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
+                            <p>
+                              or{" "}
+                              <button
+                                type="button"
+                                className="font-medium text-indigo-600 hover:text-indigo-500"
+                                onClick={() => navigate("/shop")}
+                              >
+                                Continue Shopping
+                                <span aria-hidden="true"> &rarr;</span>
+                              </button>
+                            </p>
+                          </div>
                         </div>
-                      </div>
+                      ) : (
+                        <h3 className="mb-96 font-bold text-red-500 text-4xl mx-auto">Your Cart Is Empty!</h3>
+                      )}
                     </div>
                   </DialogPanel>
                 </TransitionChild>

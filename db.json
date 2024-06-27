@@ -1,25 +1,216 @@
 {
   "users": [
     {
-      "id": "c191",
+      "id": "4ffe",
       "name": "Afnan Pk",
       "email": "afnanpk8@gmail.com",
       "password": "a",
-      "confirmPassword": "a"
+      "confirmPassword": "a",
+      "cart": [],
+      "orders": [
+        {
+          "id": "eef08e88",
+          "cartItems": [
+            {
+              "id": "1",
+              "name": "Party Ramper With Stylish Bow and Collar.",
+              "imageSrc": "https://media.hunyhuny.com/9968-large_default/onesies-rompers-newborn-toddler-infant.jpg",
+              "imageAlt": "Front of men's Basic Tee in black.",
+              "price": "20",
+              "type": "dress",
+              "color": "Beige",
+              "quantity": 1
+            },
+            {
+              "id": "3",
+              "name": "Navy Collar With Soft Bamboo Cotton Ramper for Infants",
+              "imageSrc": "https://media.hunyhuny.com/10164-large_default/onesies-rompers-newborn-toddler-infant.jpg",
+              "imageAlt": "Baby Dress in white",
+              "price": "40",
+              "type": "dress",
+              "color": "White",
+              "quantity": 1
+            },
+            {
+              "id": "4",
+              "name": "Little Baby Bow Soft Bamboo Cotton Onesies For Infants",
+              "imageSrc": "https://media.hunyhuny.com/10215-large_default/onesies-rompers-newborn-toddler-infant.jpg",
+              "imageAlt": "Baby Dress in white",
+              "price": "25",
+              "type": "dress",
+              "color": "Red",
+              "quantity": 1
+            },
+            {
+              "id": "5",
+              "name": "Cute Little Chicken Print Soft Rampers",
+              "imageSrc": "https://media.hunyhuny.com/9974-large_default/onesies-rompers-newborn-toddler-infant.jpg",
+              "imageAlt": "Baby Dress in white",
+              "price": "39",
+              "type": "dress",
+              "color": "Blue",
+              "quantity": 1
+            }
+          ],
+          "amount": 166.32,
+          "email": "afnanpk8@gmail.com",
+          "cardholder": "AFNAN PK",
+          "carddetails": "921814910134",
+          "address": "Koduvally, Thamarassery, Kozikode kerala ",
+          "orderDate": "2024-06-27T09:18:49.242Z"
+        }
+      ]
     },
     {
-      "id": "6c47",
-      "name": "Adnan ",
-      "email": "adnanadnu088@gmail.com",
-      "password": "q",
-      "confirmPassword": "q"
-    },
-    {
-      "id": "49cc",
-      "name": "Afnan Pk",
-      "email": "hashir@gmail.com",
+      "id": "43f8",
+      "name": "hidash",
+      "email": "hidash@gmail.com",
       "password": "a",
-      "confirmPassword": "a"
+      "confirmPassword": "a",
+      "cart": [],
+      "orders": []
+    },
+    {
+      "id": "2a29",
+      "name": "anfasulHaque",
+      "email": "anfas@gmail.com",
+      "password": "a",
+      "confirmPassword": "a",
+      "cart": [],
+      "orders": [
+        {
+          "id": "a55feb05",
+          "cartItems": [
+            {
+              "id": "1508",
+              "name": "Modiji Prime",
+              "imageSrc": "https://www.pmindia.gov.in/wp-content/uploads/2022/12/Modi-Ji-Photo-02-e1647325936821.jpg",
+              "imageAlt": "Modi Prakash",
+              "price": "89",
+              "type": "other",
+              "color": "Green",
+              "quantity": 1
+            },
+            {
+              "id": "c3df",
+              "name": " Beige Vintage tricycle by Stoy.",
+              "imageSrc": "https://images.prod.babyshopgroup.io/images/PM-59633%23A/512x512.jpeg",
+              "imageAlt": "alt text",
+              "price": "29",
+              "color": "beige",
+              "type": "Toy",
+              "quantity": 1
+            }
+          ],
+          "amount": 159.24,
+          "email": "ijas@gmail.com",
+          "cardholder": "AFNAN PK",
+          "carddetails": "933924920222",
+          "address": "Kunnamangalam, kozhikode",
+          "orderDate": "2024-06-27T12:27:35.484Z"
+        }
+      ]
+    }
+  ],
+  "products": [
+    {
+      "id": "1",
+      "name": "Party Ramper With Stylish Bow and Collar.",
+      "imageSrc": "https://media.hunyhuny.com/9968-large_default/onesies-rompers-newborn-toddler-infant.jpg",
+      "imageAlt": "Front of men's Basic Tee in black.",
+      "price": "20",
+      "type": "dress",
+      "color": "Beige"
+    },
+    {
+      "id": "3",
+      "name": "Navy Collar With Soft Bamboo Cotton Ramper for Infants",
+      "imageSrc": "https://media.hunyhuny.com/10164-large_default/onesies-rompers-newborn-toddler-infant.jpg",
+      "imageAlt": "Baby Dress in white",
+      "price": "40",
+      "type": "dress",
+      "color": "White"
+    },
+    {
+      "id": "4",
+      "name": "Little Baby Bow Soft Bamboo Cotton Onesies For Infants",
+      "imageSrc": "https://media.hunyhuny.com/10215-large_default/onesies-rompers-newborn-toddler-infant.jpg",
+      "imageAlt": "Baby Dress in white",
+      "price": "25",
+      "type": "dress",
+      "color": "Red"
+    },
+    {
+      "id": "5",
+      "name": "Cute Little Chicken Print Soft Rampers",
+      "imageSrc": "https://media.hunyhuny.com/9974-large_default/onesies-rompers-newborn-toddler-infant.jpg",
+      "imageAlt": "Baby Dress in white",
+      "price": "39",
+      "type": "dress",
+      "color": "Blue"
+    },
+    {
+      "id": "6",
+      "name": "Cute Teddy Print Full Sleeves Full Length Rampers",
+      "imageSrc": "https://media.hunyhuny.com/9921-large_default/onesies-rompers-newborn-toddler-infant.jpg",
+      "imageAlt": "Baby Dress in white",
+      "price": "29",
+      "type": "dress",
+      "color": "whites"
+    },
+    {
+      "id": "7",
+      "name": "Baby Elephant Full Sleeves Organic Cotton Winter Pant",
+      "imageSrc": "https://media.hunyhuny.com/9956-large_default/onesies-rompers-newborn-toddler-infant.jpg",
+      "imageAlt": "Baby Dress in white",
+      "price": "40",
+      "type": "dress",
+      "color": "Indigo"
+    },
+    {
+      "id": "8",
+      "name": "Apple Print Full Sleeves Snap Button Romper And Onesies ",
+      "imageSrc": "https://media.hunyhuny.com/9986-large_default/onesies-rompers-newborn-toddler-infant.jpg",
+      "imageAlt": "Baby Dress in white",
+      "price": "25",
+      "type": "dress",
+      "color": "red"
+    },
+    {
+      "id": "7cea",
+      "name": "Swag buddy",
+      "imageSrc": "https://i.pinimg.com/550x/31/23/2f/31232fe4b51b47763282524f008d9081.jpg",
+      "imageAlt": "This is alt message",
+      "price": "99",
+      "type": "other",
+      "color": "Magenda"
+    },
+    {
+      "id": "1508",
+      "name": "Modiji Prime",
+      "imageSrc": "https://www.pmindia.gov.in/wp-content/uploads/2022/12/Modi-Ji-Photo-02-e1647325936821.jpg",
+      "imageAlt": "Modi Prakash",
+      "price": "89",
+      "type": "other",
+      "color": "Green"
+    },
+    {
+      "id": "c3df",
+      "name": " Beige Vintage tricycle by Stoy.",
+      "imageSrc": "https://images.prod.babyshopgroup.io/images/PM-59633%23A/512x512.jpeg",
+      "imageAlt": "alt text",
+      "price": "29",
+      "color": "beige",
+      "type": "Toy"
+    },
+    {
+      "id": "c823",
+      "name": "Manilla Swim shoes Bay Green.",
+      "imageSrc": "https://images.prod.babyshopgroup.io/images/PM-54097%23A/512x512.jpeg",
+      "imageAlt": "This is alt message",
+      "price": "39",
+      "color": "green",
+      "type": "shoe"
     }
   ]
 }

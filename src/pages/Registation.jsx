@@ -13,6 +13,8 @@ const Registation = () => {
       email: "",
       password: "",
       confirmPassword: "",
+      cart: [],
+      orders:[]
     },
     validationSchema: Yup.object({
       name: Yup.string()
@@ -33,13 +35,14 @@ const Registation = () => {
     }),
     onSubmit: (values) => {
       console.log(values);
-      axios.get("http://localhost:8000/users").then((res) => {
+      axios.get("http://localhost:8000/users")
+      .then((res) => {
         const datas = res.data;
         // console.log(datas);
         const doesMailExists = datas.find(
           (user) => user.email === values.email
         );
-        console.log(doesMailExists)
+        // console.log(doesMailExists)
         if (doesMailExists) {
           toast.error("This Email Already Exists!");
         } else {
@@ -80,7 +83,7 @@ const Registation = () => {
               name="name"
               value={formik.values.name}
               onChange={formik.handleChange}
-              onBlur={formik.onBlur}
+              onBlur={formik.handleBlur}
             />
             {formik.touched.name && formik.errors.name ? (
               <p className="mt-1 text-sm text-orange-600">
@@ -104,7 +107,7 @@ const Registation = () => {
               name="email"
               value={formik.values.email}
               onChange={formik.handleChange}
-              onBlur={formik.onBlur}
+              onBlur={formik.handleBlur}
             />
             {formik.touched.id && formik.errors.id ? (
               <p className="mt-1 text-sm text-orange-600">{formik.errors.id}</p>
@@ -126,7 +129,7 @@ const Registation = () => {
               name="password"
               value={formik.values.password}
               onChange={formik.handleChange}
-              onBlur={formik.onBlur}
+              onBlur={formik.handleBlur}
             />
             {formik.touched.password && formik.errors.password ? (
               <p className="mt-1 text-sm text-orange-600">

@@ -1,45 +1,34 @@
 import { Fragment, useContext, useState } from "react";
-import {
-  Dialog,
-  DialogPanel,
-  Disclosure,
-  DisclosureButton,
-  DisclosurePanel,
-  Popover,
-  PopoverButton,
-  PopoverGroup,
-  PopoverPanel,
-  Transition,
-} from "@headlessui/react";
-import {
-  ArrowPathIcon,
-  Bars3Icon,
-  ChartPieIcon,
-  CursorArrowRaysIcon,
-  FingerPrintIcon,
-  SquaresPlusIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
-import {
-  ChevronDownIcon,
-  PhoneIcon,
-  PlayCircleIcon,
-} from "@heroicons/react/20/solid";
-import { Link, useNavigate } from "react-router-dom";
+import { Dialog, DialogPanel } from "@headlessui/react";
+import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Logo from "../assets/logo.png";
-import Shop from "../pages/shop";
+
 import { HiOutlineShoppingCart } from "react-icons/hi2";
 import myContext from "./context";
 import picture from "../assets/Guest1.png";
+import fav from "../assets/favic.png";
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
+import UserProfile from "../pages/UserPanel/UserProfile";
+import OrderSuccess from "./orderSuccess";
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { isLoggedIn, setLoggedIn, cart } = useContext(myContext);
+  const {
+    isLoggedIn,
+    count,
+    setcount,
+    cart,
+    user,
+    openModal,
+    isModalOpen,
+    closeModal,
+    userDetails,
+  } = useContext(myContext);
+
   const navigate = useNavigate();
+  const location = useLocation();
   return (
     <header className="bg-indigo-100">
       <nav
@@ -89,45 +78,7 @@ export default function Navbar() {
               Contact Us
             </Link>
           </div>
-          <div>
-            <div className="relative md:block hidden">
-              <label htmlFor="Search" className="sr-only">
-                {" "}
-                Search{" "}
-              </label>
-
-              <input
-                type="text"
-                id="Search"
-                placeholder="Search for..."
-                className="w-full rounded-md border-gray-200 py-2.5 pe-10 shadow-md sm:text-sm"
-              />
-
-              <span className="absolute inset-y-0 end-0 grid w-10 place-content-center">
-                <button
-                  type="button"
-                  className="text-gray-600 hover:text-gray-700"
-                >
-                  <span className="sr-only">Search</span>
-
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth="1.5"
-                    stroke="currentColor"
-                    className="h-4 w-4"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
-                    />
-                  </svg>
-                </button>
-              </span>
-            </div>
-          </div>
+          <div></div>
         </div>
         <div className="text-2xl mx-6">
           {isLoggedIn ? (
@@ -143,15 +94,20 @@ export default function Navbar() {
         </div>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
           {isLoggedIn ? (
-            <div className="items-center">
-              <img src={picture} alt="photo" className="h-14" />
-              <Link
-                to={"/"}
-                onClick={() => setLoggedIn(false)}
-                className="text-sm font-semibold leading-6 text-gray-900"
-              >
-                Log Out
-              </Link>
+            <div
+              onClick={() => {
+                console.log("clicked")
+                openModal();
+
+              }}
+              className="flex flex-col text-center"
+            >
+              <div className="mx-auto">
+                <img src={picture} alt="photo" className="h-14" />
+              </div>
+              <div className="text-md font-semibold leading-none text-gray-900">
+                {userDetails.name}
+              </div>
             </div>
           ) : (
             <Link
@@ -169,15 +125,10 @@ export default function Navbar() {
         onClose={setMobileMenuOpen}
       >
         <div className="fixed inset-0 z-10" />
-        <DialogPanel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
+        <DialogPanel className="fixed inset-y-0 right-0 z-10 w-full h-fit bg-indigo-50 px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
           <div className="flex items-center justify-between">
             <a href="#" className="-m-1.5 p-1.5">
-              <span className="sr-only">Your Company</span>
-              <img
-                className="h-8 w-auto"
-                src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-                alt=""
-              />
+              <img className="h-16 w-auto" src={fav} alt="" />
             </a>
             <button
               type="button"
@@ -192,42 +143,63 @@ export default function Navbar() {
             <div className="-my-6 divide-y divide-gray-500/10">
               <div className="space-y-2 py-6">
                 <Link
+                  onClick={() => setMobileMenuOpen(false)}
                   to={"/"}
                   className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                 >
                   Home
                 </Link>
-                <a
-                  href="/shop"
+                <Link
+                  onClick={() => setMobileMenuOpen(false)}
+                  to={"/shop"}
                   className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                 >
                   Shop
-                </a>
-                <a
-                  href="/about"
+                </Link>
+                <Link
+                  onClick={() => setMobileMenuOpen(false)}
+                  to={"/about"}
                   className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                 >
                   About Us
-                </a>
-                <a
-                  href="/contact"
+                </Link>
+                <Link
+                  onClick={() => setMobileMenuOpen(false)}
+                  to={"/contact"}
                   className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                 >
                   Contact Us
-                </a>
+                </Link>
               </div>
               <div className="py-6">
-                <a
-                  href="#"
-                  className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                >
-                  Log in
-                </a>
+                {isLoggedIn ? (
+                  <button
+                  
+                    onClick={() => {
+                      openModal()
+                      setMobileMenuOpen(false);
+                      // localStorage.clear;
+                    }}
+                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                  >
+                    View Profile
+                  </button>
+                ) : (
+                  <Link
+                    onClick={() => setMobileMenuOpen(false)}
+                    to={"/login"}
+                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                  >
+                    Log in
+                  </Link>
+                )}
               </div>
             </div>
           </div>
         </DialogPanel>
       </Dialog>
+      <UserProfile/>
+      <OrderSuccess/>
     </header>
   );
 }

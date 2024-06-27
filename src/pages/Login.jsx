@@ -1,15 +1,25 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { ErrorMessage, useFormik, yupToFormErrors } from "formik";
 import * as Yup from "yup";
-import { toast } from "react-toastify";
+// import  toast  from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import myContext from "../components/context";
+import { toast } from "react-toastify";
+// import toast from "react-toastify";
 
 // import './Registation';
 const Login = () => {
   const navigate = useNavigate();
-  const {isLoggedIn, setLoggedIn} = useContext(myContext);
+  const { isLoggedIn, setLoggedIn, cart, setCart } = useContext(myContext);
+  const logged = localStorage.getItem("credentials");
+
+  useEffect(() => {
+    if (logged) {
+      navigate("/");
+      toast.success("You Already Logged In!");
+    }
+  }, []);
 
   const formik = useFormik({
     initialValues: {
@@ -29,23 +39,39 @@ const Login = () => {
     }),
     onSubmit: (values) => {
       console.log(values);
-      axios.get("http://localhost:8000/users/")
-      .then((result) => {
-        const resp = result.data
+      if(values.email== "Lucida@gmail.com" && values.password =="AdminLucida1"){
+        navigate('/admin')
+      }
+      else{
+
+      axios.get("http://localhost:8000/users/").then((result) => {
+        const resp = result.data;
 
         const user = resp.find(
-          (user)=> user.email === values.email && user.password === values.password
+          (user) =>
+            user.email === values.email && user.password === values.password
         );
-          if (user) {
-            toast.success("Login Successful!");
-            setLoggedIn(true)
-            navigate("/");
-          } else {
-            toast.error("INVALID CREDENTIALS !");
-          }
-        });
-     },
-    });
+        if (user) {
+          localStorage.setItem("id", user.id);
+          const id = localStorage.getItem("id");
+
+          toast.success("Login Successful!");
+
+          localStorage.setItem("credentials",JSON.stringify(user));
+
+          setLoggedIn(true);
+
+          axios.get("http://localhost:8000/users/" + id).then((res) => {
+            setCart(res.data.cart);
+            console.log(cart, "cart");
+          });
+          navigate("/");
+        } else {
+          toast.error("INVALID CREDENTIALS !");
+        }
+      });
+    }
+}});
 
   return (
     <div className="h-screen bg-indigo-50 w-full flex justify-center items-center">
