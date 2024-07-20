@@ -6,6 +6,8 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import myContext from "../components/context";
 import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { fetchCart } from "../Redux/thunk/thunk";
 // import toast from "react-toastify";
 
 // import './Registation';
@@ -13,7 +15,7 @@ const Login = () => {
   const navigate = useNavigate();
   const { isLoggedIn, setLoggedIn, cart, setCart } = useContext(myContext);
   const logged = localStorage.getItem("credentials");
-
+  const dispatch = useDispatch()
   useEffect(() => {
     if (logged) {
       navigate("/");
@@ -61,10 +63,7 @@ const Login = () => {
 
           setLoggedIn(true);
 
-          axios.get("http://localhost:8000/users/" + id).then((res) => {
-            setCart(res.data.cart);
-            console.log(cart, "cart");
-          });
+          dispatch(fetchCart(id))
           navigate("/");
         } else {
           toast.error("INVALID CREDENTIALS !");
@@ -74,10 +73,10 @@ const Login = () => {
 }});
 
   return (
-    <div className="h-screen bg-indigo-50 w-full flex justify-center items-center">
-      <div className="bg-indigo-100 px-8 py-6 shadow-xl rounded-xl lg:px-16">
+    <div className="h-screen bg-[url('https://img.freepik.com/free-vector/white-abstract-background_23-2148810353.jpg?t=st=1721119708~exp=1721123308~hmac=6e39515514c8a52f2d89b4818058c02b255a2024f184c16e35f2e35dcb4acbd1&w=1380')] bg-cover bg-center  w-full flex justify-center items-center">
+      <div className="bg-white/10 backdrop-blur-md px-8 py-6 shadow-2xl rounded-xl lg:px-16">
         <form onSubmit={formik.handleSubmit} className="flex flex-col gap-4">
-          <h1 className="font-medium">LOGIN!</h1>
+          <h1 className="text-2xl text-center">LOGIN!</h1>
 
           <div>
             <div className="flex">

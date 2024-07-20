@@ -12,18 +12,14 @@ import fav from "../assets/favic.png";
 
 import UserProfile from "../pages/UserPanel/UserProfile";
 import OrderSuccess from "./orderSuccess";
+import { useSelector } from "react-redux";
 
 export default function Navbar() {
+  const cart = useSelector(state => state.cart.items)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const {
     isLoggedIn,
-    count,
-    setcount,
-    cart,
-    user,
-    openModal,
-    isModalOpen,
-    closeModal,
+    setIsModalOpen,
     userDetails,
   } = useContext(myContext);
 
@@ -97,7 +93,7 @@ export default function Navbar() {
             <div
               onClick={() => {
                 console.log("clicked")
-                openModal();
+                setIsModalOpen(true);
 
               }}
               className="flex flex-col text-center"
@@ -114,7 +110,10 @@ export default function Navbar() {
               to={"/login"}
               className="text-sm font-semibold leading-6 text-gray-900"
             >
-              Log in
+              <button className="bg-indigo-400 shadow-2xl p-2 px-4 rounded-full hover:bg-indigo-600">
+
+              LogIn
+              </button>
             </Link>
           )}
         </div>
@@ -176,7 +175,7 @@ export default function Navbar() {
                   <button
                   
                     onClick={() => {
-                      openModal()
+                      setIsModalOpen(true)
                       setMobileMenuOpen(false);
                       // localStorage.clear;
                     }}

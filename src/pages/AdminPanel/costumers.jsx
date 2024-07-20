@@ -5,6 +5,8 @@ import  {toast}  from "react-toastify";
 import ViewCart from "../../components/viewCart";
 import CartModal from "../../components/cartModal";
 import ViewOrders from "../../components/viewOrders";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUsers } from "../../Redux/thunk/adminThunk";
 
 const Costumers = () => {
   const [users, setUsers] = useState([]);
@@ -13,7 +15,10 @@ const Costumers = () => {
   const [userName, setUserName] = useState("");
   const [orders, setOrders] = useState([]);
   const [isOrdersVisible, setIsOrdersVisible] = useState(false);
+
+  const dispatch = useDispatch()
   useEffect(() => {
+    dispatch(fetchUsers())
     axios.get("http://localhost:8000/users").then((res) => setUsers(res.data));
   }, []);
 

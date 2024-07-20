@@ -1,7 +1,10 @@
 import React, { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { addCart } from "../Redux/features/cart/cartSlice";
 
-function ProductPreview({ setIsVisible, previewProduct ,handleClick}) {
+function ProductPreview({ setIsVisible, previewProduct }) {
   
+  const dispatch = useDispatch()
   return (
     <div className="bg-gray-100 py-8 max-h-fit">
     <div className="relative">
@@ -41,7 +44,7 @@ function ProductPreview({ setIsVisible, previewProduct ,handleClick}) {
             </div>
             <div className="flex -mx-2 mb-4">
               <div className="w-1/2 px-2">
-                <button onClick={()=> handleClick(previewProduct)} className="w-full bg-blue-600 text-white py-2 px-4 rounded-full font-bold hover:bg-blue-700">
+                <button onClick={()=> dispatch(addCart(previewProduct))} className="w-full bg-blue-600 text-white py-2 px-4 rounded-full font-bold hover:bg-blue-700">
                   Add to Cart
                 </button>
               </div>

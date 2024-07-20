@@ -10,9 +10,9 @@ import Layout from "./components/layout";
 
 import myContext from "./components/context";
 import Checkout from "./pages/UserPanel/checkout";
-import axios from "axios";
+
 import Costumers from "./pages/AdminPanel/costumers";
-import Products from "./pages/AdminPanel/Viewproducts";
+
 import AdminLayout from "./pages/AdminPanel/outlet";
 import ErrorPage from "./pages/errorPage";
 import ViewProducts from "./pages/AdminPanel/Viewproducts";
@@ -25,31 +25,27 @@ import Home from "./pages/UserPanel/Home";
 import Shop from "./pages/UserPanel/shop";
 import Cart from "./pages/UserPanel/Cart";
 import Orders from "./pages/UserPanel/Orders";
+import { useDispatch } from "react-redux";
+import { fetchCart, fetchOrders } from "./Redux/thunk/thunk";
 
 function App() {
-  const [cart, setCart] = useState([]);
-  const [total, setTotal] = useState(0);
+  const dispatch = useDispatch();
   const [isLoggedIn, setLoggedIn] = useState(false);
-  const [count, setCount] = useState(0);
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const id = localStorage.getItem("id");
 
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
   useEffect(() => {
     if (id) {
-      axios.get("http://localhost:8000/users/" + id).then((res) => {
-        setCart(res.data.cart);
-      });
+      dispatch(fetchCart(id));
     }
+    dispatch(fetchOrders(id));
   }, []);
 
   const user = localStorage.getItem("credentials") || false;
   const userDetails = JSON.parse(user);
 
   useEffect(() => {
-
     if (user) {
       setLoggedIn(true);
     }
@@ -61,21 +57,13 @@ function App() {
       <myContext.Provider
         value={{
           userDetails,
-          openModal,
-          closeModal,
           isModalOpen,
           setIsModalOpen,
           id,
           orderSuccess,
           setOrderSuccess,
-          cart,
-          setCart,
-          total,
-          setTotal,
           isLoggedIn,
           setLoggedIn,
-          count,
-          setCount,
         }}
       >
         <BrowserRouter>
@@ -83,7 +71,7 @@ function App() {
             <Route path="*" element={<ErrorPage />} />
             <Route path="/" element={<Layout />}>
               <Route path="/" element={<Home />} />
-              <Route path="/orders" element={<Orders/>}/>
+              <Route path="/orders" element={<Orders />} />
               <Route path="/shop" element={<Shop />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />

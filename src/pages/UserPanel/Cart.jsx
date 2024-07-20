@@ -12,14 +12,22 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import myContext from "../../components/context";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  removeCart,
+  updateQuantity,
+  updateTotal,
+} from "../../Redux/features/cart/cartSlice";
+import { updateCartAsync } from "../../Redux/thunk/thunk";
 export default function Cart() {
+  const dispatch = useDispatch();
+  const cart = useSelector((state) => state.cart.items);
+  const total = useSelector((state)=> state.cart.total)
   const [open, setOpen] = useState(true);
-  const { cart, setCart, isLoggedIn, setTotal, total } = useContext(myContext);
+  const { isLoggedIn } = useContext(myContext);
   const navigate = useNavigate();
   const loged = localStorage.getItem("credentials");
-  const id = localStorage.getItem("id");
 
-  let updatedCart;
   useEffect(() => {
     if (!loged) {
       navigate("/");
@@ -27,37 +35,30 @@ export default function Cart() {
   }, []);
 
   const removerEvent = (productId) => {
-    updatedCart = cart.filter((itm) => itm.id !== productId);
-    setCart(updatedCart);
-    updateCartOnServer(updatedCart);
-    toast.success("Removed Item From Cart");
+    dispatch(removeCart(productId));
+    dispatch(updateCartAsync())
   };
 
-  const updateQuantity = (productId, newQuantity) => {
-    updatedCart = cart.map((product) =>
-      product.id === productId ? { ...product, quantity: newQuantity } : product
-    );
-    setCart(updatedCart);
-    updateCartOnServer(updatedCart);
+  const handleQuantity = (productId, newQuantity) => {
+    dispatch(updateQuantity({ productId, newQuantity }));
+    dispatch(updateCartAsync())
+
   };
 
   useEffect(() => {
-    const amount = cart.reduce(
-      (acc, curr) => Number(acc) + Number(curr.price) * Number(curr.quantity),
-      0
-    );
-    setTotal(amount);
-  }, [cart, setTotal]);
+    dispatch(updateTotal())
 
-  const updateCartOnServer = async (updatedCart) => {
-    try {
-      await axios.patch(`http://localhost:8000/users/${id}`, {
-        cart: updatedCart,
-      });
-    } catch (error) {
-      console.error("Error updating cart data:", error);
-    }
-  };
+  }, [cart]);
+
+  // const updateCartOnServer = async (updatedCart) => {
+  //   try {
+  //     await axios.patch(`http://localhost:8000/users/${id}`, {
+  //       cart: updatedCart,
+  //     });
+  //   } catch (error) {
+  //     console.error("Error updating cart data:", error);
+  //   }
+  // };
 
   return (
     <div>
@@ -149,7 +150,7 @@ export default function Cart() {
                                         <button
                                           className="border px-2"
                                           onClick={() =>
-                                            updateQuantity(
+                                            handleQuantity(
                                               product.id,
                                               Math.max(product.quantity - 1, 1)
                                             )
@@ -163,7 +164,7 @@ export default function Cart() {
                                         <button
                                           className="border px-2"
                                           onClick={() =>
-                                            updateQuantity(
+                                            handleQuantity(
                                               product.id,
                                               product.quantity + 1
                                             )
@@ -192,7 +193,7 @@ export default function Cart() {
                           </div>
                         </div>
                       </div>
-                      {cart.length >0 ? (
+                      {cart.length > 0 ? (
                         <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
                           <div className="flex justify-between text-base font-medium text-gray-900">
                             <p>Subtotal</p>
@@ -224,7 +225,9 @@ export default function Cart() {
                           </div>
                         </div>
                       ) : (
-                        <h3 className="mb-96 font-bold text-red-500 text-4xl mx-auto">Your Cart Is Empty!</h3>
+                        <h3 className="mb-96 font-bold text-red-500 text-4xl mx-auto">
+                          Your Cart Is Empty!
+                        </h3>
                       )}
                     </div>
                   </DialogPanel>

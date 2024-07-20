@@ -2,23 +2,27 @@ import React, { useContext, useEffect, useState } from "react";
 import myContext from "../../components/context";
 import axios from "axios";
 import CancelOrder from "../../components/cancelOrder";
+import { useDispatch, useSelector } from "react-redux";
+import { removeOrder } from "../../Redux/features/orders/orderSlice";
+import { updateOrdersAsync } from "../../Redux/thunk/thunk";
 
 const OrderDetails = () => {
-  const [orders, setOrders] = useState([]);
+  // const [orders, setOrders] = useState([]);
   const { id } = useContext(myContext);
   const [isVisible, setIsVisible] = useState(false);
   const [delId, setDelId] = useState([]);
-  useEffect(() => {
-    axios.get("http://localhost:8000/users/" + id).then((res) => {
-      setOrders(res.data.orders);
-      console.log(res.data.orders);
-    });
-  }, []);
+  const orders = useSelector(state => state.orders)
+  const dispatch = useDispatch()
+  // useEffect(() => {
+    // axios.get("http://localhost:8000/users/" + id).then((res) => {
+    //   setOrders(res.data.orders);
+
+    // });
+  // }, []);
 
   const cancelOrder = (orderId) => {
-    const updatedOrders = orders.filter((order) => order.id !== orderId);
-    setOrders(updatedOrders);
-    updateCartOnServer(updatedOrders);
+      dispatch(removeOrder(orderId))
+      dispatch(updateOrdersAsync())
   };
   const cancelModal = (orderId) => {
     setIsVisible(true);

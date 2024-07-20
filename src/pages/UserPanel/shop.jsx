@@ -4,48 +4,26 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import ProductPreview from "../../components/ProductPreview";
 import CartModal from "../../components/cartModal";
+import { useDispatch, useSelector } from "react-redux";
+import { addCart } from "../../Redux/features/cart/cartSlice";
+import { fetchProducts, updateCartAsync } from "../../Redux/thunk/thunk";
 
 export default function Shop() {
-  const { cart, setCart, isLoggedIn } = useContext(myContext);
+  const dispatch = useDispatch();
+  const product = useSelector(state => state.products.products)
+  const { isLoggedIn } = useContext(myContext);
   const [searchQuery, setSearchQuery] = useState("");
-  const [product, setProduct] = useState([]);
+
   const [isVisible, setIsVisible] = useState(false);
   const [previewProduct, setPreviewProduct] = useState([]);
   const id = localStorage.getItem("id");
   useEffect(() => {
-    axios
-      .get("http://localhost:8000/products/")
-      .then((res) => setProduct(res.data))
-      .catch((err) => toast.error(err.message));
+    dispatch(fetchProducts());
   }, []);
 
-  const updateCartOnServer = async (updatedCart) => {
-    try {
-      await axios.patch(`http://localhost:8000/users/${id}`, {
-        cart: updatedCart,
-      });
-
-      toast.success("Successfully Added");
-    } catch (error) {
-      toast.error("Error Updating Cart: ", error);
-      console.error("Error updating cart data:", error);
-    }
-  };
-
   const handleClick = (product) => {
-    let updatedCart;
-
-    const productIndex = cart.findIndex((item) => item.id === product.id);
-
-    if (productIndex === -1) {
-      updatedCart = [...cart, { ...product, quantity: 1 }];
-    } else {
-      updatedCart = cart.map((item, index) =>
-        index === productIndex ? { ...item, quantity: item.quantity + 1 } : item
-      );
-    }
-    setCart(updatedCart);
-    updateCartOnServer(updatedCart);
+    dispatch(addCart(product));
+    dispatch(updateCartAsync());
   };
 
   const filteredProducts = product.filter((product) =>
@@ -135,7 +113,7 @@ export default function Shop() {
                       ? handleClick(product)
                       : toast.error("You Need To Login First!")
                   }
-                  className="inline-block rounded-full bg-blue-600 px-16 py-3 text-sm font-medium text-white hover:bg-indigo-700 hover:text-white focus:outline-none focus:ring active:text-indigo-500"
+                  className="inline-block rounded-md bg-indigo-600 px-16 py-3 text-sm font-medium text-white hover:bg-indigo-700 hover:text-white focus:outline-none focus:ring active:text-indigo-500"
                 >
                   Add To Cart
                 </button>

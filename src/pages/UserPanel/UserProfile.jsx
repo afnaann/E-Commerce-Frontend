@@ -12,7 +12,7 @@ import {
 } from "@fortawesome/free-brands-svg-icons";
 
 const UserProfile = () => {
-  const { isModalOpen, closeModal, userDetails, setLoggedIn } =
+  const { isModalOpen, setIsModalOpen, userDetails, setLoggedIn } =
     useContext(myContext);
   //   console.log(userDetails);
 
@@ -21,14 +21,14 @@ const UserProfile = () => {
   const logout = () => {
     setLoggedIn(false);
     localStorage.clear();
-    closeModal();
+    setIsModalOpen(false);
   };
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-10">
       <div className="bg-white p-8 rounded-lg shadow-lg relative w-[800px]">
         <button
           className="absolute top-2 right-6 text-black hover:text-gray-900 text-4xl"
-          onClick={closeModal}
+          onClick={()=> setIsModalOpen(false)}
         >
           &times;
         </button>
@@ -127,7 +127,7 @@ const UserProfile = () => {
                 Manage Address
               </Link>
               <Link
-                onClick={() => closeModal()}
+                onClick={() => setIsModalOpen(false)}
                 to={"/cart"}
                 className="flex gap-2 text-base font-medium border-t border-gray-100 text-black py-4 pl-6 pr-3 w-full hover:bg-gray-100 transition duration-150"
               >
@@ -142,7 +142,7 @@ const UserProfile = () => {
                 My Cart
               </Link>
               <Link
-                onClick={() => closeModal()}
+                onClick={() => setIsModalOpen(false)}
                 to={"/orders"}
                 className="flex gap-2 text-base font-medium border-t border-gray-100 text-black py-4 pl-6 pr-3 w-full hover:bg-gray-100 transition duration-150"
               >

@@ -6,32 +6,26 @@ import OrderSuccess from "../../components/orderSuccess";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
-import { v4 as uuidv4 } from 'uuid';
-
+import { v4 as uuidv4 } from "uuid";
+import { useDispatch, useSelector } from "react-redux";
+import { emptyCart } from "../../Redux/features/cart/cartSlice";
+import { addOrder } from "../../Redux/features/orders/orderSlice";
+import { updateOrdersAsync } from "../../Redux/thunk/thunk";
 
 const Checkout = () => {
   const navigate = useNavigate();
+  const total = useSelector((state) => state.cart.total);
+  const { id, setOrderSuccess } = useContext(myContext);
 
-  const { id, cart, setCart, total , setOrderSuccess} = useContext(myContext);
-  const [orderData, setOrderData] = useState([]);
   const uniqueId = uuidv4();
-  const truncatedId = uniqueId.slice(0,8)
-  
-  useEffect(() => {
-    const fetchUserOrders = async () => {
-      
-      try {
-        const response = await axios.get(`http://localhost:8000/users/${id}`);
-        setOrderData(response.data.orders|| []);
-        // console.log(response.data.orders);
-      } catch (error) {
-        console.error("Error fetching user orders:", error);
-      }
-    };
-    
-    fetchUserOrders();
+  const truncatedId = uniqueId.slice(0, 8);
+  const cart = useSelector((state) => state.cart.items);
+  const dispatch = useDispatch();
+  const orders = useSelector((state) => state.orders);
 
-  }, [id]);
+  // useEffect(() => {
+  // setOrderData(orders);
+  // }, [id]);
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -56,7 +50,7 @@ const Checkout = () => {
     onSubmit: (values) => {
       console.log(values);
       const newOrder = {
-        id: truncatedId ,
+        id: truncatedId,
         cartItems: cart,
         amount: amount,
         email: values.email,
@@ -66,17 +60,17 @@ const Checkout = () => {
         orderDate: new Date().toISOString(),
       };
       console.log(newOrder);
+      dispatch(addOrder(newOrder));
+      dispatch(updateOrdersAsync());
       axios
         .patch(`http://localhost:8000/users/${id}`, {
-          orders: [...orderData, newOrder],
           cart: [],
         })
         .then(() => {
-          setCart([]);
+          dispatch(emptyCart());
           // toast.success("Order Placed Successfully!");
-          setOrderSuccess(true)
+          setOrderSuccess(true);
           navigate("/");
-          
         })
         .catch((err) => {
           console.log("Failed Placing Order", err);
@@ -85,7 +79,6 @@ const Checkout = () => {
     },
   });
 
-  // console.log(total)
   const tax = ((18 / 100) * total).toFixed(2);
 
   const shipCharge = 20;
