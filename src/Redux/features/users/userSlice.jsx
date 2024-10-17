@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchUsers } from "../../thunk/adminThunk";
+import { fetchUsers } from "./usersThunk";
 
 
 
@@ -11,7 +11,7 @@ const userSlice = createSlice({
     name:'user',
     initialState,
     reducers:{
-
+        
     },
     extraReducers:(builder)=> {
         builder

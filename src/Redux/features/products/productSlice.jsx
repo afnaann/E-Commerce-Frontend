@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchProducts } from "../../thunk/thunk";
+import { fetchProducts } from "./productsThunk";
 
 const initialState = {
     products:[]
@@ -9,7 +9,7 @@ const productSlice = createSlice({
     name: 'products',
     initialState,
     reducers:{
-
+        
     },
     extraReducers: (builder) => {
         builder
