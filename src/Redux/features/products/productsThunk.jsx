@@ -1,5 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+// import { toast } from "react-toastify";
 
 
 export const fetchProducts = createAsyncThunk(
@@ -14,3 +15,21 @@ export const fetchProducts = createAsyncThunk(
       }
     }
   );
+
+  export const AddNewProduct = createAsyncThunk(
+    'product/addproduct',
+    async ({api,values}) => {
+      try {
+        const response = await api.post('/products/post/',values,{
+          headers:{
+            'Content-Type': 'multipart/form-data',
+          },
+        })
+        return response.data
+      }
+      catch(error){
+        console.error(error)
+        // toast.error('Error Uploading Product')
+      }
+    }
+  )

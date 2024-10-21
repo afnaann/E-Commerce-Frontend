@@ -17,7 +17,7 @@ const cartSlice = createSlice({
   initialState,
   reducers: {
     updateTotal: (state) => {
-      state.total = state.items.reduce((acc, curr) => {
+      state.total = state.items?.reduce((acc, curr) => {
         return Number(acc) + (Number(curr.product?.price) * Number(curr.quantity));
       }, 0);
     },
@@ -37,23 +37,24 @@ const cartSlice = createSlice({
       })
       .addCase(AddToCart.fulfilled, (state, action) => {
         const { product, quantity } = action.payload;
-        console.log(product);
-        console.log(state.items);
+        console.log(quantity)
         if (quantity == 1) {
           state.items.push(action.payload);
         } else {
           const productt = state.items.find(
             (item) => item.product.id === product.id
           );
-          productt.quantity += 1;
+          console.log(productt)
+          if (productt){
+
+            productt.quantity += 1;
+          }
         }
       })
-      // .addCase(AddToCart.pending, (state, action) => {
-      //   // console.log(action)
-      //   // state.items = action.payload;
-      // })
+
       .addCase(AddToCart.rejected, (state, action) => {
         console.log(action);
+        
         toast.error("Error Updating, Try Agian.");
 
         // state.items = action.payload;

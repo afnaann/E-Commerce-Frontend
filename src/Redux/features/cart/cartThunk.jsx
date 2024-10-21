@@ -6,10 +6,10 @@ export const fetchCart = createAsyncThunk("cart/fetchCart", async (userId) => {
     const response = await axios.get(
       `http://127.0.0.1:8000/cart/get/${userId}/`
     );
-    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error(error);
+
   }
 });
 

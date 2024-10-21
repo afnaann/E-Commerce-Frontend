@@ -1,10 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchOrders, updateOrdersOnServer } from "../../thunk/thunk";
+import { fetchOrders } from "./orderThunk";
 
+
+const initialState = {
+    items: []
+}
 
 const orderSlice = createSlice({
     name: 'orders',
-    initialState:[],
+    initialState,
     reducers:{
         addOrder: (state, action) => {
             state.push(action.payload)
@@ -16,11 +20,10 @@ const orderSlice = createSlice({
     extraReducers:(builder)=> {
         builder
         .addCase(fetchOrders.fulfilled, (state, action)=> {
-
-            return action.payload
+            state.items = action.payload
         })
-        .addCase(updateOrdersOnServer.fulfilled, (state, action) => {
-            return action.payload
+        .addCase(fetchOrders.rejected,(state,action)=> {
+            console.log(action)
         })
     }
 })
