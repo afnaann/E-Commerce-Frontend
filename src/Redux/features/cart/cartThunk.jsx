@@ -15,30 +15,31 @@ export const fetchCart = createAsyncThunk("cart/fetchCart", async (userId) => {
 
 export const AddToCart = createAsyncThunk(
   "cart/addtocart",
-  async ({ userId, productId, api }) => {
+  async ({ userId, productId, api }, { rejectWithValue }) => {
     try {
       const response = await api.post(`/cart/post/${userId}/`, {
         product: productId,
       });
       return response.data;
     } catch (err) {
-      console.error("error adding to cart.", err);
+      console.error("Error adding to cart:", err);
+      return rejectWithValue(err.response?.data || 'Failed to add product to cart');
     }
   }
 );
 
 export const UpdateQuantity = createAsyncThunk(
   "cart/updatequantity",
-  async ({ userId, productId, api, quantity }) => {
+  async ({ userId, productId, api, quantity }, {rejectWithValue}) => {
     try {
       const response = await api.patch(`/cart/patch/${userId}/`, {
         product: productId,
         quantity: quantity,
       });
-      console.log(response.data)
       return response.data;
     } catch (error) {
-      console.error("error updating quantity,", err);
+      console.error("error updating quantity,", error.response.data);
+      return rejectWithValue(error.response?.data || 'Faled to add product to cart')
     }
   }
 );

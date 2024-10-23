@@ -32,7 +32,7 @@ const cartSlice = createSlice({
         state.status = "succeeded";
         state.items = action.payload;
       })
-      .addCase(fetchCart.rejected, (state) => {
+      .addCase(fetchCart.rejected, (state,action) => {
         state.status = "failed";
       })
       .addCase(AddToCart.fulfilled, (state, action) => {
@@ -44,20 +44,15 @@ const cartSlice = createSlice({
           const productt = state.items.find(
             (item) => item.product.id === product.id
           );
-          console.log(productt)
           if (productt){
-
             productt.quantity += 1;
           }
         }
       })
 
       .addCase(AddToCart.rejected, (state, action) => {
-        console.log(action);
-        
-        toast.error("Error Updating, Try Agian.");
 
-        // state.items = action.payload;
+        toast.error(action.payload.update ||"Error Updating, Try Agian.");
       })
       .addCase(UpdateQuantity.fulfilled, (state, action) => {
         const { product, quantity } = action.payload;
@@ -66,7 +61,6 @@ const cartSlice = createSlice({
           (item) => item.product.id === product
         );
 
-        console.log(existingItem);
         if (quantity != 0) {
           existingItem.quantity = quantity;
         } else {
@@ -76,8 +70,9 @@ const cartSlice = createSlice({
 
       // .addCase(UpdateQuantity.pending, (state, action) => {})
       .addCase(UpdateQuantity.rejected, (state, action) => {
-        console.error(action);
-        toast.error("Error Updating, Try Agian.");
+
+        console.log(action);
+        toast.error(action.payload?.update||"Error Updating, Try Agian.");
       });
   },
 });

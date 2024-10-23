@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchUsers } from "./usersThunk";
+import { fetchUsers,blockUsers } from "./usersThunk";
 
 
 
@@ -17,6 +17,15 @@ const userSlice = createSlice({
         builder
         .addCase(fetchUsers.fulfilled, (state, action)=> {
             state.userdetails = action.payload;
+        })
+        .addCase(fetchUsers.rejected, (state, action)=> {
+            console.log(action)
+        })
+        .addCase(blockUsers.fulfilled, (state, action)=> {
+            console.log(action.payload)
+        })
+        .addCase(blockUsers.rejected, (state, action)=> {
+            console.log(action)
         })
     }
 

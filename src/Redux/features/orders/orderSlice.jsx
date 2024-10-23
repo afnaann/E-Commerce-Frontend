@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchOrders } from "./orderThunk";
+import { updateOrder,fetchAllOrders, fetchOrders } from "./orderThunk";
 
 
 const initialState = {
@@ -20,9 +20,21 @@ const orderSlice = createSlice({
     extraReducers:(builder)=> {
         builder
         .addCase(fetchOrders.fulfilled, (state, action)=> {
-            state.items = action.payload
+            state.items = action.payload;
         })
         .addCase(fetchOrders.rejected,(state,action)=> {
+            console.log(action)
+        })
+        .addCase(fetchAllOrders.fulfilled, (state, action)=> {
+            state.items = action.payload;
+        })
+        .addCase(fetchAllOrders.rejected, (state, action)=> {
+            console.error(action)
+        })
+        .addCase(updateOrder.fulfilled, (state, action)=> {
+            console.log(action.payload)
+        })
+        .addCase(updateOrder.rejected, (state, action)=> {
             console.log(action)
         })
     }
