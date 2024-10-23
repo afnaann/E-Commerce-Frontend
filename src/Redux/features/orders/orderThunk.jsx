@@ -5,7 +5,6 @@ import axios from "axios";
 export const fetchOrders = createAsyncThunk('orders/fetchOrders', async ({userId,api})=> {
   try {
     const response = await api.get(`/orders/get/${userId}`);
-    console.log(response.data);
     return response.data
   } catch (error) {
     console.error("Error fetching user orders:", error);
@@ -30,10 +29,9 @@ export const updateOrder = createAsyncThunk(
       const response = await api.patch(`/orders/update/${orderId}/`, {
         status: status,
       });
-      console.log(response.data);
       return response.data; 
     } catch (err) {
-      console.log(err);
+      console.error(err);
       return rejectWithValue(err.response ? err.response.data : err.message);
     }
   }

@@ -18,6 +18,6 @@ export const blockUsers = createAsyncThunk('user/blockUser', async ({api,id})=> 
     return response.data
   }
   catch(err){
-    console.err(err)
+    console.error(err)
   }
 })

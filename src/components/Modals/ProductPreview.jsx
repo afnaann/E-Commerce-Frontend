@@ -5,7 +5,6 @@ import { AddToCart } from "../../Redux/features/cart/cartThunk";
 function ProductPreview({ setIsVisible, previewProduct }) {
   
   const dispatch = useDispatch()
-  console.log(previewProduct)
   return (
     <div className="bg-gray-100 py-8 max-h-fit">
     <div className="relative">

@@ -17,24 +17,8 @@ function AddProduct({ setIsAdd }) {
     };
 
     const handleSubmit = (values) => {
-        console.log(values)
         dispatch(AddNewProduct({api:api,values:values}))
         setIsAdd(false)
-        // api
-        //     .post('http://127.0.0.1:8000/products/post/', values,{
-        //         headers: {
-        //             'Content-Type': 'multipart/form-data',
-        //         },
-        //     })
-        //     .then((res) => {
-        //         console.log(res)
-        //         toast.success('Successfully Added');
-        //         setIsAdd(false); 
-        //     })
-        //     .catch(err => {
-        //         console.log(err)
-        //         toast.error('Failed Adding Item');
-        //     });
     };
 
     return (

@@ -32,16 +32,14 @@ const Register = () => {
         .required("Must Confirm Password"),
     }),
     onSubmit: (values) => {
-      console.log(values);
       axios
         .post("http://127.0.0.1:8000/users/register/", values)
         .then((res) => {
-          console.log(res);
           toast.success("Registered Successfully! ");
           navigate("/login");
         })
         .catch((err) => {
-          console.log(err);
+          console.error(err);
           if (err.response.data.email) {
             toast.error("OOPS! " + err.response.data.email);
           } else {

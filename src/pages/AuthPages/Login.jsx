@@ -43,13 +43,11 @@ const Login = () => {
         .required("Password is Required"),
     }),
     onSubmit: async (values) => {
-      console.log(values);
       try {
         const response = await axios.post(
           "http://127.0.0.1:8000/users/login/",
           values
         );
-        console.log(response.data);
         localStorage.setItem("authTokens", JSON.stringify(response.data));
         setAuthTokens(response.data);
         const den = jwtDecode(response.data.access);
@@ -70,7 +68,7 @@ const Login = () => {
           toast.error('Invalid Credentials!')
         }
         
-        console.log(err)
+        console.error(err)
       }
     },
   });

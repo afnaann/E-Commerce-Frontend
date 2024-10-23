@@ -45,7 +45,6 @@ const Checkout = () => {
         .required("Address is Required"),
     }),
     onSubmit: (values) => {
-      console.log(values);
       const newOrder = {
         id: truncatedId,
         cartItems: cart,
@@ -56,7 +55,6 @@ const Checkout = () => {
         address: values.address,
         orderDate: new Date().toISOString(),
       };
-      console.log(newOrder);
       dispatch(addOrder(newOrder));
       // dispatch(updateOrdersAsync());
     },

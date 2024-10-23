@@ -11,14 +11,12 @@ function OrderSuccess() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const sessionId = params.get("session_id");
-    console.log(sessionId);
 
     const processOrder = async () => {
       try {
         const response = await api.get(
           `http://127.0.0.1:8000/api/stripe/processorder/?session_id=${sessionId}`
         );
-        console.log(response.data);
       } catch (error) {
         console.error("Error processing order:", error);
       }

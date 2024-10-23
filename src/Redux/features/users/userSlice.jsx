@@ -19,13 +19,13 @@ const userSlice = createSlice({
             state.userdetails = action.payload;
         })
         .addCase(fetchUsers.rejected, (state, action)=> {
-            console.log(action)
+            console.error(action)
         })
         .addCase(blockUsers.fulfilled, (state, action)=> {
             console.log(action.payload)
         })
         .addCase(blockUsers.rejected, (state, action)=> {
-            console.log(action)
+            console.error(action)
         })
     }
 

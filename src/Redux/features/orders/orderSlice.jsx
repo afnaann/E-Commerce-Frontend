@@ -23,7 +23,7 @@ const orderSlice = createSlice({
             state.items = action.payload;
         })
         .addCase(fetchOrders.rejected,(state,action)=> {
-            console.log(action)
+            console.error(action)
         })
         .addCase(fetchAllOrders.fulfilled, (state, action)=> {
             state.items = action.payload;
@@ -32,10 +32,9 @@ const orderSlice = createSlice({
             console.error(action)
         })
         .addCase(updateOrder.fulfilled, (state, action)=> {
-            console.log(action.payload)
         })
         .addCase(updateOrder.rejected, (state, action)=> {
-            console.log(action)
+            console.error(action)
         })
     }
 })

@@ -37,7 +37,6 @@ const cartSlice = createSlice({
       })
       .addCase(AddToCart.fulfilled, (state, action) => {
         const { product, quantity } = action.payload;
-        console.log(quantity)
         if (quantity == 1) {
           state.items.push(action.payload);
         } else {
@@ -71,7 +70,6 @@ const cartSlice = createSlice({
       // .addCase(UpdateQuantity.pending, (state, action) => {})
       .addCase(UpdateQuantity.rejected, (state, action) => {
 
-        console.log(action);
         toast.error(action.payload?.update||"Error Updating, Try Agian.");
       });
   },

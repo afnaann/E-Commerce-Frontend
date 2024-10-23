@@ -23,7 +23,7 @@ const productSlice = createSlice({
         })
         .addCase(AddNewProduct.rejected,(state,action)=>{
             // toast.error('Failed Adding')
-            console.logo(action)
+            console.error(action)
         })
     }
 })

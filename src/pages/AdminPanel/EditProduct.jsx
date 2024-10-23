@@ -24,7 +24,7 @@ function EditProduct({ id, setIsVisible }) {
           });
         })
         .catch((err) => {
-          console.log("Error Fetching!");
+          console.error("Error Fetching!",err);
         });
     }
   }, [id]);

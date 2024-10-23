@@ -16,13 +16,11 @@ const useAxios = () => {
 
     authAxios.interceptors.request.use(async (req)=> {
         const isExpired = dayjs.unix(user.exp).diff(dayjs()) < 1
-        console.log('checking if it is expired!')
         if (!isExpired) return req
 
         const response = await axios.post(`${baseURL}/users/refresh/`,{
             refresh: authTokens?.refresh
         });
-        console.log('Updating the request')
 
         localStorage.setItem('authTokens',JSON.stringify(response.data))
         setAuthTokens(response.data)
