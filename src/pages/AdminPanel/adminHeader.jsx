@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
-const Navbar = () => {
+const AdminHeader = () => {
   const [isSideNavOpen, setIsSideNavOpen] = useState(false);
 
   const toggleSideNav = () => {
@@ -106,4 +106,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default AdminHeader;

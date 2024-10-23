@@ -2,12 +2,17 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
-import CartModal from "../../components/cartModal";
+import CartModal from "../../components/Modals/cartModal";
 import EditProduct from "./EditProduct";
 import DeleteModal from "../../components/Modals/deleteModals";
+import { useSelector, useDispatch } from "react-redux";
+import AddProduct from "./AddProduct";
+import { fetchProducts } from "../../Redux/features/products/productsThunk";
+import ProductCard from "../../components/Modals/productCard";
 
 function ViewProducts() {
-  const [products, setProducts] = useState([]);
+  const products = useSelector((state) => state.products.products);
+  const dispatch = useDispatch();
   const [searchQuery, setSearchQuery] = useState("");
   const [isEdit, setIsEdit] = useState(false);
   const [id, setId] = useState("");
@@ -15,19 +20,15 @@ function ViewProducts() {
   const [isVisible, setIsVisible] = useState(false);
   const [delId, setDelId] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [isAdd, setIsAdd] = useState(false);
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
-  useEffect(() => {
-    axios
-      .get("http://localhost:8000/products")
 
-      .then((res) => {
-        setProducts(res.data);
-  
-      });
-  }, []);
+  useEffect(() => {
+    dispatch(fetchProducts());
+  }, [dispatch]);
 
   const editProduct = (id) => {
     setId(id);
@@ -39,65 +40,72 @@ function ViewProducts() {
     setIsVisible(true);
   };
 
-  const filteredProducts = products.filter(
+  const filteredProducts = products?.filter(
     (product) =>
-      product.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
-      (selectedCategory === "" || product.type === selectedCategory)
+      product?.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+      (selectedCategory === "" || product.category.name === selectedCategory)
   );
 
-  const categories = [...new Set(products.map((product) => product.type))];
+  const categories = [
+    ...new Set(products?.map((product) => product?.category.name)),
+  ];
 
   return (
-    <div className="flex gap-11 flex-wrap justify-center mt-24">
-      <div className="flex w-11/12 justify-centres gap-10">
-        <div className="relative w-fit h-fit">
-          <button
-            onClick={toggleDropdown}
-            className="text-gray-700 hover:text-blue-700 focus:outline-none"
-          >
-            {selectedCategory==""? "All": selectedCategory}
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="size-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="m19.5 8.25-7.5 7.5-7.5-7.5"
-              />
-            </svg>
-          </button>
-          {isDropdownOpen && (
-            <ul className="absolute bg-white border border-gray-200 rounded shadow-lg mt-2 w-48">
-              <li
-                className="px-4 py-2 hover:bg-gray-100"
-                onClick={() => {
-                  setSelectedCategory("");
-                  setIsDropdownOpen(false);
-                }}
-              >
-                All
-              </li>
-              {categories.map((category) => (
-                <li
-                  key={category}
-                  onClick={() => {
-                    setSelectedCategory(category);
-                    setIsDropdownOpen(false);
-                  }}
-                  className="px-4 py-2 hover:bg-gray-100"
-                >
-                  {category}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-        <div className="hidden md:flex space-x-8 items-center h-fit ">
+    <div className="flex flex-col items-center mt-24">
+      <div className="flex flex-wrap justify-between items-center w-11/12 mb-6">
+      <div className="relative inline-block">
+  <button
+    onClick={toggleDropdown}
+    className="text-gray-700 hover:text-blue-600 focus:outline-none flex items-center font-medium transition-colors duration-200 ease-in-out"
+  >
+    {selectedCategory === "" ? "All Categories" : selectedCategory}
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth={2}
+      stroke="currentColor"
+      className={`w-5 h-5 ml-2 transform transition-transform duration-200 ${
+        isDropdownOpen ? "rotate-180" : "rotate-0"
+      }`}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+      />
+    </svg>
+  </button>
+
+  {isDropdownOpen && (
+    <ul className="absolute left-0 bg-white border border-gray-200 rounded-md shadow-lg mt-2 w-56 z-20 divide-y divide-gray-100">
+      <li
+        className="px-4 py-3 hover:bg-gray-50 cursor-pointer text-gray-800 font-normal transition-colors duration-200"
+        onClick={() => {
+          setSelectedCategory("");
+          setIsDropdownOpen(false);
+        }}
+      >
+        All Categories
+      </li>
+      {categories.map((category) => (
+        <li
+          key={category}
+          onClick={() => {
+            setSelectedCategory(category);
+            setIsDropdownOpen(false);
+          }}
+          className="px-4 py-3 hover:bg-gray-50 cursor-pointer text-gray-800 font-normal transition-colors duration-200"
+        >
+          {category}
+        </li>
+      ))}
+    </ul>
+  )}
+</div>
+
+
+        <div className="flex items-center space-x-4">
           <div className="relative">
             <input
               type="text"
@@ -123,58 +131,37 @@ function ViewProducts() {
               </svg>
             </button>
           </div>
+          <button
+            onClick={() => setIsAdd(true)}
+            className="bg-emerald-700 text-white py-2 px-4 rounded hover:bg-blue-700 transition duration-300"
+          >
+            Add New Product
+          </button>
         </div>
       </div>
 
-      {filteredProducts.map((items, id) => (
-        <div
-          className="bg-indigo-200 p-10 shadow-xl rounded-lg text-center"
-          key={id}
-        >
-          <div href="#" className="group block w-64 h-auto ">
-            <img
-              src={items.imageSrc}
-              alt={items.imageAlt}
-              className="aspect-square w-full rounded object-cover"
-            />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-11/12">
+        {filteredProducts?.map((product) => (
+          <ProductCard
+            key={product.id} // Use product.id for keys
+            items={product}
+            editProduct={editProduct}
+            deleteAction={deleteAction}
+          />
+        ))}
+      </div>
 
-            <div className="mt-3">
-              <h3 className="font-medium text-gray-900 ">{items.name}</h3>
-              <p className="text">Color: {items.color}</p>
-              <p className="text">Type: {items.type}</p>
-              <p className="mt-1 text-lg text-gray-800 flex justify-center mb-2">
-                ${items.price}
-              </p>
-            </div>
-            <div className="inline-flex -space-x-px overflow-hidden rounded-md border bg-white shadow-md ">
-              <button
-                onClick={() => editProduct(items.id)}
-                className="inline-block px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 focus:relative"
-              >
-                Edit
-              </button>
-
-              <button
-                onClick={() => deleteAction(items.id)}
-                className="inline-block px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 focus:relative"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        </div>
-      ))}
-      <CartModal isVisible={isEdit}>
-        <EditProduct id={id} setIsVisible={setIsEdit} />
-      </CartModal>
-      <DeleteModal
-        isVisible={isVisible}
-        setIsVisible={setIsVisible}
-        setProducts={setProducts}
-        products={products}
-        setDelId={setDelId}
-        delId={delId}
-      />
+      {isEdit && <EditProduct id={id} setIsVisible={setIsEdit} />}
+      {isVisible && (
+        <DeleteModal
+          isVisible={isVisible}
+          setIsVisible={setIsVisible}
+          products={products}
+          setDelId={setDelId}
+          delId={delId}
+        />
+      )}
+      {isAdd && <AddProduct setIsAdd={setIsAdd} products={products} />}
     </div>
   );
 }
