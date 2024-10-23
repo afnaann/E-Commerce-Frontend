@@ -1,242 +1,216 @@
 import React, { useContext, useEffect, useState } from "react";
-import {
-  Dialog,
-  DialogPanel,
-  DialogTitle,
-  Transition,
-  TransitionChild,
-} from "@headlessui/react";
-import { XMarkIcon } from "@heroicons/react/24/outline";
 
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
-import { toast } from "react-toastify";
-import myContext from "../../components/context";
+
 import { useDispatch, useSelector } from "react-redux";
-import {
-  removeCart,
-  updateQuantity,
-  updateTotal,
-} from "../../Redux/features/cart/cartSlice";
-import { updateCartAsync } from "../../Redux/thunk/thunk";
+import { fetchCart, UpdateQuantity } from "../../Redux/features/cart/cartThunk";
+import MainContext from "../../context/context";
+import useAxios from "../../components/utils/useAxios";
+import { updateTotal } from "../../Redux/features/cart/cartSlice";
+import { toast } from "react-toastify";
+
 export default function Cart() {
-  const dispatch = useDispatch();
-  const cart = useSelector((state) => state.cart.items);
-  const total = useSelector((state)=> state.cart.total)
-  const [open, setOpen] = useState(true);
-  const { isLoggedIn } = useContext(myContext);
+  const cart = useSelector((state) => state.cart.items || []);
+  const total = useSelector((state) => state.cart.total);
   const navigate = useNavigate();
-  const loged = localStorage.getItem("credentials");
+  const { user } = useContext(MainContext);
+  const api = useAxios();
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!loged) {
+    if (!user) {
       navigate("/");
     }
+    dispatch(fetchCart(user.user_id));
   }, []);
 
-  const removerEvent = (productId) => {
-    dispatch(removeCart(productId));
-    dispatch(updateCartAsync())
-  };
-
-  const handleQuantity = (productId, newQuantity) => {
-    dispatch(updateQuantity({ productId, newQuantity }));
-    dispatch(updateCartAsync())
-
+  const updateCount = (productId, newQuantity) => {
+    dispatch(
+      UpdateQuantity({
+        productId: productId,
+        userId: user.user_id,
+        quantity: newQuantity,
+        api: api,
+      })
+    );
   };
 
   useEffect(() => {
-    dispatch(updateTotal())
-
+    dispatch(updateTotal());
   }, [cart]);
 
-  // const updateCartOnServer = async (updatedCart) => {
-  //   try {
-  //     await axios.patch(`http://localhost:8000/users/${id}`, {
-  //       cart: updatedCart,
-  //     });
-  //   } catch (error) {
-  //     console.error("Error updating cart data:", error);
-  //   }
-  // };
+  const paymentFunction = async () => {
+    try {
+      const response = await api.post("/api/stripe/checkoutsession/", {
+        cart: cart
+      });
+
+      if (response.status == 200) {
+        const url = response.data.id;
+
+        window.location.assign(url);
+      } else {
+        toast.warning("something Went Wrong! Try Again");
+      }
+    } catch (err) {
+      toast.warning("something Went Wrong! Try Again");
+      console.error('error occured',err)
+    }
+  };
+
+  if (!cart || cart.length== 0){ 
+    return null;
+  }
+
 
   return (
-    <div>
-      <Transition show={open}>
-        <Dialog className="relative z-10 " onClose={() => navigate("/shop")}>
-          <TransitionChild
-            enter="ease-in-out duration-500"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in-out duration-500"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity " />
-          </TransitionChild>
+    <div className="font-sans max-w-4xl max-md:max-w-xl mx-auto p-4">
+      <h1 className="text-2xl font-extrabold text-gray-800">Your Cart</h1>
+      <div className="grid md:grid-cols-3 gap-4 mt-8">
+        <div className="md:col-span-2 space-y-4">
+          {cart?.map((item) => (
+            <div
+              className="flex gap-4 bg-white px-4 py-6 rounded-md shadow-[0_2px_12px_-3px_rgba(6,81,237,0.3)]"
+              key={item.product.id}
+            >
+              <div className="flex gap-4">
+                <div className="w-28 h-28 max-sm:w-24 max-sm:h-24 shrink-0">
+                  <img
+                    src={`data:image/png;base64,${item.product.Image_base64}`}
+                    className="w-full h-full object-contain"
+                    alt={item.product.name}
+                  />
+                </div>
+                <div className="flex flex-col gap-4">
+                  <div>
+                    <h3 className="text-base font-bold text-gray-800">
+                      {item.product.name}
+                    </h3>
+                    <p className="text-sm font-semibold text-gray-500 mt-2 flex items-center gap-2">
+                      Category:
+                      <span className="font-light text-gray-600">
+                        {item.product.category.name}
+                      </span>
+                    </p>
+                  </div>
+                  <div className="mt-auto flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        updateCount(item.product.id, item.quantity - 1)
+                      }
+                      className="flex items-center justify-center w-5 h-5 bg-gray-400 outline-none rounded-full hover:bg-gray-600"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="w-2 fill-white"
+                        viewBox="0 0 124 124"
+                      >
+                        <path d="M112 50H12C5.4 50 0 55.4 0 62s5.4 12 12 12h100c6.6 0 12-5.4 12-12s-5.4-12-12-12z"></path>
+                      </svg>
+                    </button>
+                    <span className="font-bold text-sm leading-[18px]">
+                      {item.quantity}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        updateCount(item.product.id, item.quantity + 1)
+                      }
+                      className="flex items-center justify-center w-5 h-5 bg-gray-400 outline-none rounded-full hover:bg-gray-600"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="w-2 fill-white"
+                        viewBox="0 0 42 42"
+                      >
+                        <path d="M37.059 16H26V4.941C26 2.224 23.718 0 21 0s-5 2.224-5 4.941V16H4.941C2.224 16 0 18.282 0 21s2.224 5 4.941 5H16v11.059C16 39.776 18.282 42 21 42s5-2.224 5-4.941V26h11.059C39.776 26 42 23.718 42 21s-2.224-5-4.941-5z"></path>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div className="ml-auto flex flex-col">
+                <div className="flex items-start gap-4 justify-end">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-4 cursor-pointer fill-gray-400 inline-block"
+                    viewBox="0 0 64 64"
+                  >
+                    <path d="M45.5 4A18.53 18.53 0 0 0 32 9.86 18.5 18.5 0 0 0 0 22.5C0 40.92 29.71 59 31 59.71a2 2 0 0 0 2.06 0C34.29 59 64 40.92 64 22.5A18.52 18.52 0 0 0 45.5 4ZM32 55.64C26.83 52.34 4 36.92 4 22.5a14.5 14.5 0 0 1 26.36-8.33 2 2 0 0 0 3.27 0A14.5 14.5 0 0 1 60 22.5c0 14.41-22.83 29.83-28 33.14Z"></path>
+                  </svg>
 
-          <div className="fixed inset-0 overflow-hidden">
-            <div className="absolute inset-0 overflow-hidden">
-              <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
-                <TransitionChild
-                  enter="transform transition ease-in-out duration-500 sm:duration-700"
-                  enterFrom="translate-x-full"
-                  enterTo="translate-x-0"
-                  leave="transform transition ease-in-out duration-500 sm:duration-700"
-                  leaveFrom="translate-x-0"
-                  leaveTo="translate-x-full"
-                >
-                  <DialogPanel className="pointer-events-auto w-screen max-w-md">
-                    <div className="flex h-full flex-col overflow-y-scroll bg-white shadow-xl">
-                      <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
-                        <div className="flex items-start justify-between">
-                          <DialogTitle className="text-lg font-medium text-gray-900">
-                            Shopping cart
-                          </DialogTitle>
-                          <div className="ml-3 flex h-7 items-center">
-                            <button
-                              type="button"
-                              className="relative -m-2 p-2 text-gray-400 hover:text-gray-500"
-                              onClick={() => navigate("/shop")}
-                            >
-                              <span className="absolute -inset-0.5" />
-                              <span className="sr-only">Close panel</span>
-                              <XMarkIcon
-                                className="h-6 w-6"
-                                aria-hidden="true"
-                              />
-                            </button>
-                          </div>
-                        </div>
-
-                        <div className="mt-8">
-                          <div className="flow-root">
-                            <ul
-                              role="list"
-                              className="-my-6 divide-y divide-gray-200"
-                            >
-                              {cart.map((product) => (
-                                <li key={product.id} className="flex py-6">
-                                  <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
-                                    <img
-                                      src={product.imageSrc}
-                                      alt={product.imageAlt}
-                                      className="h-full w-full object-cover object-center"
-                                    />
-                                  </div>
-
-                                  <div className="ml-4 flex flex-1 flex-col">
-                                    <div>
-                                      <div className="flex justify-between text-base font-medium text-gray-900">
-                                        <h3>
-                                          <a href={product.href}>
-                                            {product.name}
-                                          </a>
-                                        </h3>
-                                        <p className="ml-4 w-20">
-                                          <span className="text-gray-500 text-xs">
-                                            ({product.quantity} x{" "}
-                                            {product.price}){" "}
-                                          </span>{" "}
-                                          ${product.price * product.quantity}
-                                        </p>
-                                      </div>
-                                      <p className="mt-1 text-sm text-gray-500">
-                                        {product.color}
-                                      </p>
-                                    </div>
-                                    <div className="flex flex-1 items-end justify-between text-sm">
-                                      <div>
-                                        <button
-                                          className="border px-2"
-                                          onClick={() =>
-                                            handleQuantity(
-                                              product.id,
-                                              Math.max(product.quantity - 1, 1)
-                                            )
-                                          }
-                                        >
-                                          -
-                                        </button>
-                                        <span className="m-1">
-                                          {product.quantity}
-                                        </span>
-                                        <button
-                                          className="border px-2"
-                                          onClick={() =>
-                                            handleQuantity(
-                                              product.id,
-                                              product.quantity + 1
-                                            )
-                                          }
-                                        >
-                                          +
-                                        </button>
-                                      </div>
-
-                                      <div className="flex">
-                                        <button
-                                          type="button"
-                                          className="font-medium text-indigo-600 hover:text-indigo-500"
-                                          onClick={() =>
-                                            removerEvent(product.id)
-                                          }
-                                        >
-                                          Remove
-                                        </button>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        </div>
-                      </div>
-                      {cart.length > 0 ? (
-                        <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
-                          <div className="flex justify-between text-base font-medium text-gray-900">
-                            <p>Subtotal</p>
-                            <p>${total}</p>
-                          </div>
-                          <p className="mt-0.5 text-sm text-gray-500">
-                            Shipping and taxes calculated at checkout.
-                          </p>
-                          <div className="mt-6">
-                            <Link
-                              to={"/checkout"}
-                              className="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
-                            >
-                              Checkout
-                            </Link>
-                          </div>
-                          <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
-                            <p>
-                              or{" "}
-                              <button
-                                type="button"
-                                className="font-medium text-indigo-600 hover:text-indigo-500"
-                                onClick={() => navigate("/shop")}
-                              >
-                                Continue Shopping
-                                <span aria-hidden="true"> &rarr;</span>
-                              </button>
-                            </p>
-                          </div>
-                        </div>
-                      ) : (
-                        <h3 className="mb-96 font-bold text-red-500 text-4xl mx-auto">
-                          Your Cart Is Empty!
-                        </h3>
-                      )}
-                    </div>
-                  </DialogPanel>
-                </TransitionChild>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-4 cursor-pointer fill-gray-400 inline-block hover:fill-red-500"
+                    viewBox="0 0 24 24"
+                    onClick={() => updateCount(item.product.id, 0)}
+                  >
+                    <path d="M19 7a1 1 0 0 0-1 1v11.191A1.92 1.92 0 0 1 15.99 21H8.01A1.92 1.92 0 0 1 6 19.191V8a1 1 0 0 0-2 0v11.191A3.918 3.918 0 0 0 8.01 23h7.98A3.918 3.918 0 0 0 20 19.191V8a1 1 0 0 0-1-1Zm1-3h-4V2a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v2H4a1 1 0 0 0 0 2h16a1 1 0 0 0 0-2ZM10 4V3h4v1Z"></path>
+                    <path d="M11 17v-7a1 1 0 0 0-2 0v7a1 1 0 0 0 2 0Zm4 0v-7a1 1 0 0 0-2 0v7a1 1 0 0 0 2 0Z"></path>
+                  </svg>
+                </div>
+                <h3 className="text-base font-bold text-gray-800 mt-auto">
+                  ₹{item.product.price}
+                </h3>
               </div>
             </div>
+          ))}
+        </div>
+
+        {/* Order Summary */}
+        <div className="bg-white p-6 rounded-md shadow-[0_2px_12px_-3px_rgba(6,81,237,0.3)]">
+          <h2 className="text-lg font-bold text-gray-800">Order Summary</h2>
+          <div className="space-y-2 text-sm font-semibold text-gray-500 mt-4">
+            <div className="flex justify-between items-center">
+              <span>Subtotal</span>
+              <span>{total}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span>Shipping</span>
+              <span>Free</span>
+            </div>
+
           </div>
-        </Dialog>
-      </Transition>
+          <div className="flex justify-between items-center font-bold text-base text-gray-800 mt-6">
+            <span>Total</span>
+            <span>{total}</span>
+          </div>
+          <div className="mt-8 space-y-2">
+            <button
+              type="button"
+              onClick={() => paymentFunction()}
+              className="text-sm px-4 py-2.5 w-full font-semibold tracking-wide bg-gray-800 hover:bg-gray-900 text-white rounded-md"
+            >
+              Make Payment ₹{total}
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate("/")}
+              className="text-sm px-4 py-2.5 w-full font-semibold tracking-wide bg-transparent hover:bg-gray-100 text-gray-800 border border-gray-300 rounded-md"
+            >
+              Continue Shopping{" "}
+            </button>
+            <div className="mt-4 flex flex-wrap justify-center gap-4">
+              <img
+                src="https://readymadeui.com/images/master.webp"
+                alt="card1"
+                className="w-10 object-contain"
+              />
+              <img
+                src="https://readymadeui.com/images/visa.webp"
+                alt="card2"
+                className="w-10 object-contain"
+              />
+              <img
+                src="https://readymadeui.com/images/american-express.webp"
+                alt="card3"
+                className="w-10 object-contain"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

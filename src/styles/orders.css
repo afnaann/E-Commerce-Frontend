@@ -1,0 +1,39 @@
+/* CSS for truncating long address */
+.truncate-address {
+    width: 150px; /* Set a fixed width for truncation */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer; /* So the user knows it's hoverable */
+  }
+  
+  /* Tooltip container */
+  .relative {
+    position: relative; /* Parent relative positioning */
+  }
+  
+  /* Tooltip text */
+  .tooltip-text {
+    visibility: hidden;
+    width: 200px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 4px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 100%; /* Position above the address */
+    left: 50%;
+    margin-left: -100px; /* Half the width of the tooltip */
+    opacity: 0;
+    transition: opacity 0.3s;
+    white-space: normal; /* Allow multi-line for long addresses */
+  }
+  
+  /* Show the tooltip when hovering over the truncated address */
+  .relative:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+  }
+  

@@ -1,43 +1,67 @@
 import { useContext, useEffect, useState } from "react";
-import myContext from "../../components/context";
 import { toast } from "react-toastify";
-import axios from "axios";
-import ProductPreview from "../../components/ProductPreview";
-import CartModal from "../../components/cartModal";
+import ProductPreview from "../../components/Modals/ProductPreview";
+import CartModal from "../../components/Modals/cartModal";
 import { useDispatch, useSelector } from "react-redux";
-import { addCart } from "../../Redux/features/cart/cartSlice";
-import { fetchProducts, updateCartAsync } from "../../Redux/thunk/thunk";
+import MainContext from "../../context/context";
+import { fetchProducts } from "../../Redux/features/products/productsThunk";
+import { AddToCart } from "../../Redux/features/cart/cartThunk";
+import useAxios from "../../components/utils/useAxios";
 
 export default function Shop() {
   const dispatch = useDispatch();
-  const product = useSelector(state => state.products.products)
-  const { isLoggedIn } = useContext(myContext);
+  const product = useSelector((state) => state.products.products);
+  const { user } = useContext(MainContext);
   const [searchQuery, setSearchQuery] = useState("");
-
   const [isVisible, setIsVisible] = useState(false);
   const [previewProduct, setPreviewProduct] = useState([]);
-  const id = localStorage.getItem("id");
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
+  const api = useAxios();
+
   useEffect(() => {
     dispatch(fetchProducts());
   }, []);
 
-  const handleClick = (product) => {
-    dispatch(addCart(product));
-    dispatch(updateCartAsync());
+  const handleClick = (productId) => {
+    dispatch(
+      AddToCart({ userId: user.user_id, productId: productId, api: api })
+    );
   };
 
-  const filteredProducts = product.filter((product) =>
-    product.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const handleCategoryChange = (category) => {
+    setSelectedCategories((prevCategories) =>
+      prevCategories.includes(category)
+        ? prevCategories.filter((cat) => cat !== category)
+        : [...prevCategories, category]
+    );
+  };
+
+  const filteredProducts = product?.filter((product) => {
+    const matchesSearch = product.name
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+    const matchesCategory =
+      selectedCategories.length === 0 ||
+      selectedCategories.includes(product.category.name);
+    return matchesSearch && matchesCategory;
+  });
 
   const productPreview = (product) => {
     setIsVisible(true);
     setPreviewProduct(product);
   };
+
+  const categories = [
+    ...new Set(product?.map((product) => product?.category.name)),
+  ];
+
   return (
-    <div className="bg-white">
-      <div className="flex justify-center mt-5 ">
-        <div className="relative block w-96 ">
+    <div className="">
+      {/* Search Bar and Category Dropdown Side by Side */}
+      <div className="flex justify-center mt-5 space-x-4">
+        {/* Search Bar */}
+        <div className="relative block w-80">
           <label htmlFor="Search" className="sr-only">
             {" "}
             Search{" "}
@@ -73,20 +97,56 @@ export default function Shop() {
             </button>
           </span>
         </div>
+
+        {/* Category Dropdown (Click) */}
+        <div className="relative inline-block">
+          <button
+            className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 cursor-pointer"
+            onClick={() => setCategoryDropdownOpen(!categoryDropdownOpen)}
+          >
+            Filter by Category
+          </button>
+
+          {categoryDropdownOpen && (
+            <div className="absolute z-10 mt-2 w-56 rounded-md bg-white shadow-lg">
+              <div className="p-4">
+                {categories.map((category, index) => (
+                  <div key={index} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id={`category-${category}`}
+                      checked={selectedCategories.includes(category)}
+                      onChange={() => handleCategoryChange(category)}
+                      className="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                    />
+                    <label
+                      htmlFor={`category-${category}`}
+                      className="ml-2 text-sm text-gray-900"
+                    >
+                      {category}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
+
+      {/* Product Grid */}
       <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8 ">
         <h2 className="text-2xl font-bold tracking-tight text-gray-900">
           Explore The Shop!
         </h2>
 
         <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
-          {filteredProducts.map((product) => (
+          {filteredProducts?.map((product) => (
             <div key={product.id} className="group relative">
               <div onClick={() => productPreview(product)}>
                 <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80 shadow-xl">
                   <img
-                    src={product.imageSrc}
-                    alt={product.imageAlt}
+                    src={`data:image/png;base64,${product.Image_base64}`}
+                    alt={product.name}
                     className="h-full w-full object-cover object-center lg:h-full lg:w-full"
                   />
                 </div>
@@ -96,11 +156,11 @@ export default function Shop() {
                       <strong>{product.name}</strong>
                     </h3>
                     <p className="mt-1 text-sm text-gray-500">
-                      {product.color}
+                      {product.category.name}
                     </p>
                   </div>
                   <p className="text-sm font-medium text-gray-900">
-                    ${product.price}
+                    ₹{product.price}
                   </p>
                 </div>
               </div>
@@ -109,8 +169,8 @@ export default function Shop() {
                 <button
                   type="button"
                   onClick={() =>
-                    isLoggedIn
-                      ? handleClick(product)
+                    user
+                      ? handleClick(product.id)
                       : toast.error("You Need To Login First!")
                   }
                   className="inline-block rounded-md bg-indigo-600 px-16 py-3 text-sm font-medium text-white hover:bg-indigo-700 hover:text-white focus:outline-none focus:ring active:text-indigo-500"
@@ -122,6 +182,8 @@ export default function Shop() {
           ))}
         </div>
       </div>
+
+      {/* Product Preview Modal */}
       <CartModal isVisible={isVisible}>
         <ProductPreview
           setIsVisible={setIsVisible}

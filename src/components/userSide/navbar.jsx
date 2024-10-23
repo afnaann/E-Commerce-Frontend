@@ -1,32 +1,26 @@
 import { Fragment, useContext, useState } from "react";
 import { Dialog, DialogPanel } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
-
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import Logo from "../assets/logo.png";
-
+import Logo from "../../assets/logo.png";
 import { HiOutlineShoppingCart } from "react-icons/hi2";
-import myContext from "./context";
-import picture from "../assets/Guest1.png";
-import fav from "../assets/favic.png";
-
-import UserProfile from "../pages/UserPanel/UserProfile";
-import OrderSuccess from "./orderSuccess";
+import picture from "../../assets/Guest1.png";
+import fav from "../../assets/favic.png";
+import UserProfile from "../../pages/UserPanel/UserProfile";
 import { useSelector } from "react-redux";
+import MainContext from "../../context/context";
 
 export default function Navbar() {
-  const cart = useSelector(state => state.cart.items)
+  const cart = useSelector((state) => state.cart.items);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const {
-    isLoggedIn,
-    setIsModalOpen,
-    userDetails,
-  } = useContext(myContext);
-
+  const [isModalOpen,setIsModalOpen] = useState(false)
+  const { user } = useContext(MainContext);
+  
   const navigate = useNavigate();
   const location = useLocation();
+
   return (
-    <header className="bg-indigo-100">
+    <header className="bg-customColor">
       <nav
         className="mx-auto flex max-w-7xl items-center justify-between lg:px-8"
         aria-label="Global"
@@ -49,39 +43,51 @@ export default function Navbar() {
         </div>
         <div className="flex items-center gap-32">
           <div className="hidden lg:flex lg:gap-x-12">
-            <Link
-              to={"/"}
-              className="text-md font-semibold leading-6 text-gray-900"
-            >
-              Home
-            </Link>
-            <Link
-              to={"/shop"}
-              className="text-md font-semibold leading-6 text-gray-900"
-            >
-              Shop
-            </Link>
-            <Link
-              to={"about"}
-              className="text-md font-semibold leading-6 text-gray-900"
-            >
-              About Us
-            </Link>
-            <Link
-              to={"contact"}
-              className="text-md font-semibold leading-6 text-gray-900"
-            >
-              Contact Us
-            </Link>
+            <div className="relative nav">
+              <Link
+                to={"/"}
+                className="text-md font-manrope leading-6 text-gray-900 relative inline-block"
+              >
+                Home
+                <span className="absolute left-0 bottom-0 h-0.5 w-0 bg-black transition-all duration-300"></span>
+              </Link>
+            </div>
+            <div className="relative nav">
+              <Link
+                to={"/shop"}
+                className="text-md font-manrope leading-6 text-gray-900 relative inline-block"
+              >
+                Shop
+                <span className="absolute left-0 bottom-0 h-0.5 w-0 bg-black transition-all duration-300"></span>
+              </Link>
+            </div>
+            <div className="relative nav">
+              <Link
+                to={"about"}
+                className="text-md font-manrope leading-6 text-gray-900 relative inline-block"
+              >
+                About Us
+                <span className="absolute left-0 bottom-0 h-0.5 w-0 bg-black transition-all duration-300"></span>
+              </Link>
+            </div>
+            <div className="relative nav">
+              <Link
+                to={"contact"}
+                className="text-md font-manrope leading-6 text-gray-900 relative inline-block"
+              >
+                Contact Us
+                <span className="absolute left-0 bottom-0 h-0.5 w-0 bg-black transition-all duration-300"></span>
+              </Link>
+            </div>
           </div>
           <div></div>
         </div>
         <div className="text-2xl mx-6">
-          {isLoggedIn ? (
+          {user ? (
             <Link to={"/cart"}>
               <div className="relative">
                 <span className="bg-blue-500 rounded-full text-sm px-2 text-white absolute left-4 bottom-3">
-                  {cart.length}
+                  {cart?.length}
                 </span>
                 <HiOutlineShoppingCart />
               </div>
@@ -89,31 +95,26 @@ export default function Navbar() {
           ) : null}
         </div>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-          {isLoggedIn ? (
+          {user ? (
             <div
               onClick={() => {
-                console.log("clicked")
                 setIsModalOpen(true);
-
               }}
               className="flex flex-col text-center"
             >
               <div className="mx-auto">
                 <img src={picture} alt="photo" className="h-14" />
               </div>
-              <div className="text-md font-semibold leading-none text-gray-900">
-                {userDetails.name}
+              <div className="text-md font-semibold uppercase leading-none text-gray-900">
+                {user?.name}
               </div>
             </div>
           ) : (
             <Link
               to={"/login"}
-              className="text-sm font-semibold leading-6 text-gray-900"
+              className="text-sm font-semibold leading-6 text-gray-900 bg-indigo-400 shadow-2xl py-1 px-4 rounded-md hover:bg-indigo-600"
             >
-              <button className="bg-indigo-400 shadow-2xl p-2 px-4 rounded-full hover:bg-indigo-600">
-
-              LogIn
-              </button>
+                LogIn
             </Link>
           )}
         </div>
@@ -171,13 +172,11 @@ export default function Navbar() {
                 </Link>
               </div>
               <div className="py-6">
-                {isLoggedIn ? (
+                {user ? (
                   <button
-                  
                     onClick={() => {
-                      setIsModalOpen(true)
+                      setIsModalOpen(true);
                       setMobileMenuOpen(false);
-                      // localStorage.clear;
                     }}
                     className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                   >
@@ -197,8 +196,7 @@ export default function Navbar() {
           </div>
         </DialogPanel>
       </Dialog>
-      <UserProfile/>
-      <OrderSuccess/>
+      <UserProfile isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
     </header>
   );
 }

@@ -1,13 +1,42 @@
 import React from "react";
-
 import { Link } from "react-router-dom";
-
+import { Carousel } from "react-responsive-carousel";
+import "react-responsive-carousel/lib/styles/carousel.min.css"; // Import carousel styles
+import { CardElement } from "@stripe/react-stripe-js";
 
 function Home() {
   return (
-    <div className=" w-full ">
+    <div className="w-full">
+      {/* Carousel Section */}
+      <Carousel
+        autoPlay
+        infiniteLoop
+        showThumbs={false}
+        showStatus={false}
+        interval={3000}
+      >
+        <div>
+          <img
+            src="https://hausandkinder.com/cdn/shop/files/3_d688df48-ca7e-478c-a3ef-68d74f4a341a.jpg?v=1707477708&width=3840"
+            alt="First Slide"
+          />
+        </div>
+        <div>
+          <img
+            src="https://hausandkinder.com/cdn/shop/files/1_a275fd5f-aee4-44c2-88e9-c5e83e5a6ecc.jpg?v=1707477708&width=3840"
+            alt="Second Slide"
+          />
+        </div>
+        <div>
+          <img
+            src="https://hausandkinder.com/cdn/shop/files/4_feaecb53-ea0d-4931-a6f6-3fb67a10d978.jpg?v=1707477708&width=3840"
+            alt="Third Slide"
+          />
+        </div>
+      </Carousel>
+
+      {/* Other Content */}
       <section>
-       
         <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
           <header className="text-center">
             <h2 className="text-xl font-bold text-gray-900 sm:text-3xl">
@@ -23,9 +52,9 @@ function Home() {
 
           <ul className="mt-8 grid grid-cols-1 gap-4 lg:grid-cols-3">
             <li>
-              <Link to={'/shop'} className="group relative block">
+              <Link to={"/shop"} className="group relative block">
                 <img
-                  src="https://images.unsplash.com/photo-1618898909019-010e4e234c55?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80"
+                  src="https://hausandkinder.com/cdn/shop/products/Bluepompom..jpg?v=1671600175&width=493"
                   alt=""
                   className="aspect-square w-full object-cover transition duration-500 group-hover:opacity-90"
                 />
@@ -43,9 +72,9 @@ function Home() {
             </li>
 
             <li>
-              <Link to={'/shop'} className="group relative block">
+              <Link to={"/shop"} className="group relative block">
                 <img
-                  src="https://images.unsplash.com/photo-1624623278313-a930126a11c3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80"
+                  src="https://hausandkinder.com/cdn/shop/products/HK34_6fdc7d10-105d-4b31-8d51-151d609a3fc6.jpg?v=1688032741&width=493"
                   alt=""
                   className="aspect-square w-full object-cover transition duration-500 group-hover:opacity-90"
                 />
@@ -63,9 +92,9 @@ function Home() {
             </li>
 
             <li className="lg:col-span-2 lg:col-start-2 lg:row-span-2 lg:row-start-1">
-              <Link to={'/shop'} className="group relative block">
+              <Link to={"/shop"} className="group relative block">
                 <img
-                  src="https://images.unsplash.com/photo-1593795899768-947c4929449d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2672&q=80"
+                  src="https://hausandkinder.com/cdn/shop/files/HK08copy_1.jpg?v=1682427370&width=493"
                   alt=""
                   className="aspect-square w-full object-cover transition duration-500 group-hover:opacity-90"
                 />
@@ -84,6 +113,7 @@ function Home() {
           </ul>
         </div>
       </section>
+
       <section className="overflow-hidden bg-white sm:grid sm:grid-cols-2 sm:items-center">
         <div className="p-8 md:p-12 lg:px-16 lg:py-24">
           <div className="mx-auto max-w-xl text-center ltr:sm:text-left rtl:sm:text-right">
@@ -115,9 +145,8 @@ function Home() {
           src="https://cdn.wallpapersafari.com/68/73/6e5VFb.jpg"
           className="h-full w-full object-cover sm:h-[calc(100%_-_2rem)] sm:self-end sm:rounded-ss-[30px] md:h-[calc(100%_-_4rem)] md:rounded-ss-[60px]"
         />
-
-        {/* add here to add  */}
       </section>
+      
     </div>
   );
 }

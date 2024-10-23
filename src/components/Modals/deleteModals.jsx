@@ -1,32 +1,31 @@
 import axios from "axios";
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
-
-function DeleteModal({ isVisible, setIsVisible, setProducts, products, delId }) {
+import { fetchProducts } from "../../Redux/features/products/productsThunk";
+import useAxios from "../utils/useAxios";
+function DeleteModal({ isVisible, setIsVisible, products, delId }) {
   const [isOpen, setIsOpen] = useState(false);
-
+  const api = useAxios()
+  const dispatch = useDispatch()
   const toggleModal = () => {
     setIsVisible(!isVisible);
   };
 
   const deleteProduct = (id) => {
     setIsVisible(false);
-    axios
-      .delete("http://localhost:8000/products/" + id)
+    api
+      .delete(`http://127.0.0.1:8000/products/delete/${id}/`)
       .then((res) => {
-        if (res.status === 200 || response.status === 204) {
+        if (res.status === 204) {
           toast.success("Removed Product Successfully");
-          console.log(res);
-          setProducts(products.filter((item) => item.id !== id));
-          
+          dispatch(fetchProducts())          
         } else {
           toast.error("Error Removing");
-          console.log("Error removing");
         }
       })
       .catch((err) => {
         toast.error("Deleting Failed");
-        console.log("Deletion Failed");
       });
   };
 
@@ -34,7 +33,6 @@ function DeleteModal({ isVisible, setIsVisible, setProducts, products, delId }) 
     <>
 
 
-      {isVisible && (
         <div
           id="popup-modal"
           tabIndex="-1"
@@ -84,7 +82,10 @@ function DeleteModal({ isVisible, setIsVisible, setProducts, products, delId }) 
                   Are you sure you want to delete this product?
                 </h3>
                 <button
-                  onClick={() => deleteProduct(delId)}
+                  onClick={() =>{
+                    deleteProduct(delId)
+                  }
+                  } 
                   className="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center"
                 >
                   Yes, I'm sure
@@ -99,7 +100,6 @@ function DeleteModal({ isVisible, setIsVisible, setProducts, products, delId }) 
             </div>
           </div>
         </div>
-      )}
     </>
   );
 }

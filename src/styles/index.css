@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-customColor; 
+}
+
+.nav:hover span {
+  width: 100%; 
+}
+
+.Select__control {
+  position: relative;
+  z-index: 10;
+}
+
+.Select__menu {
+  z-index: 999; /* High z-index to bring it in front of other elements */
+}
+
+.form-input, .form-label { 
+  position: relative; 
+  z-index: 1; /* Lower z-index to prevent interference */
+}
+.gradient{
+  background: linear-gradient(135deg, #f3e5ab, #d4cba0);
+
+}

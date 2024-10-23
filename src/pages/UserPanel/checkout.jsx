@@ -1,21 +1,18 @@
 import React, { useContext, useEffect, useState } from "react";
-import myContext from "../../components/context";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import OrderSuccess from "../../components/orderSuccess";
+
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import { useDispatch, useSelector } from "react-redux";
-import { emptyCart } from "../../Redux/features/cart/cartSlice";
 import { addOrder } from "../../Redux/features/orders/orderSlice";
-import { updateOrdersAsync } from "../../Redux/thunk/thunk";
+import MainContext from "../../context/context";
 
 const Checkout = () => {
   const navigate = useNavigate();
   const total = useSelector((state) => state.cart.total);
-  const { id, setOrderSuccess } = useContext(myContext);
+  const { id } = useContext(MainContext);
 
   const uniqueId = uuidv4();
   const truncatedId = uniqueId.slice(0, 8);
@@ -61,30 +58,16 @@ const Checkout = () => {
       };
       console.log(newOrder);
       dispatch(addOrder(newOrder));
-      dispatch(updateOrdersAsync());
-      axios
-        .patch(`http://localhost:8000/users/${id}`, {
-          cart: [],
-        })
-        .then(() => {
-          dispatch(emptyCart());
-          // toast.success("Order Placed Successfully!");
-          setOrderSuccess(true);
-          navigate("/");
-        })
-        .catch((err) => {
-          console.log("Failed Placing Order", err);
-          toast.error("Failed Placing Order");
-        });
+      // dispatch(updateOrdersAsync());
     },
   });
 
+  
   const tax = ((18 / 100) * total).toFixed(2);
 
   const shipCharge = 20;
 
   const amount = Number(total) + Number(tax) + Number(shipCharge);
-  // console.log(cart);
 
   return (
     <>
@@ -173,23 +156,23 @@ const Checkout = () => {
               Check your items. And select a suitable shipping method.
             </p>
             <div className="max-h-96 overflow-auto">
-              {cart.map((item) => (
+              {cart?.map((item) => (
                 <div
-                  key={item.id}
+                  key={item.product.id}
                   className="mt-8 space-y-3 rounded-lg border bg-white px-2 py-4 sm:px-6 "
                 >
                   <div className="flex flex-col rounded-lg bg-white sm:flex-row">
                     <img
                       className="m-2 h-24 w-28 rounded-md border object-cover object-center"
-                      src={item.imageSrc}
-                      alt={item.imageAlt}
+                      src={`data:image/png;base64,${item.product.Image_base64}`}
+                      alt={item.product.name}
                     />
                     <div className="flex w-full flex-col px-4 py-4">
-                      <span className="font-semibold">{item.name}</span>
+                      <span className="font-semibold">{item.product.name}</span>
                       <span className="float-right text-gray-400">
-                        Qty:{item.quantity}
+                        Qty:{item.quantity} x ₹{item.product.price}
                       </span>
-                      <p className="text-lg font-bold">${item.price}</p>
+                      <p className="text-lg font-bold">₹{item.product.price * item.quantity}</p>
                     </div>
                   </div>
                 </div>
@@ -208,12 +191,12 @@ const Checkout = () => {
                 />
                 <span className="peer-checked:border-gray-700 absolute right-4 top-1/2 box-content block h-3 w-3 -translate-y-1/2 rounded-full border-8 border-gray-300 bg-white"></span>
                 <label
-                  className="peer-checked:border-2 peer-checked:border-gray-700 peer-checked:bg-gray-50 flex cursor-pointer select-none rounded-lg border border-gray-300 p-4"
+                  className="peer-checked:border-2 peer-checked:border-gray-700 peer-checked:bg-white flex cursor-pointer select-none rounded-lg border border-gray-300 p-4"
                   htmlFor="radio_1"
                 >
                   <img
                     className="w-14 object-contain"
-                    src="/images/naorrAeygcJzX0SyNI4Y0.png"
+                    src="https://i.pinimg.com/736x/7f/4d/56/7f4d56aa755be575226bc8505591393a.jpg"
                     alt=""
                   />
                   <div className="ml-5">
@@ -221,8 +204,8 @@ const Checkout = () => {
                     <p className="text-slate-500 text-sm leading-6">
                       Delivery: 2-4 Days
                     </p>
-                    <p className="text-red-500 text-sm leading-6">
-                      Shipping: $20
+                    <p className="text-green-700 text-sm leading-6">
+                      Shipping: ₹20
                     </p>
                   </div>
                 </label>
@@ -236,12 +219,12 @@ const Checkout = () => {
                 />
                 <span className="peer-checked:border-gray-700 absolute right-4 top-1/2 box-content block h-3 w-3 -translate-y-1/2 rounded-full border-8 border-gray-300 bg-white"></span>
                 <label
-                  className="peer-checked:border-2 peer-checked:border-gray-700 peer-checked:bg-gray-50 flex cursor-pointer select-none rounded-lg border border-gray-300 p-4"
+                  className="peer-checked:border-2 peer-checked:border-gray-700 peer-checked:bg-white flex cursor-pointer select-none rounded-lg border border-gray-300 p-4"
                   htmlFor="radio_2"
                 >
                   <img
                     className="w-14 object-contain"
-                    src="/images/oG8xsl3xsOkwkMsrLGKM4.png"
+                    src="https://www.freepnglogos.com/uploads/fedex-logo-png/circle-fedex-icon-png-logo-12.png"
                     alt=""
                   />
                   <div className="ml-5">
@@ -250,7 +233,7 @@ const Checkout = () => {
                       Delivery: 3-4 Days
                     </p>
                     <p className="text-red-500 text-sm leading-6">
-                      Shipping: $20
+                      Shipping: ₹20
                     </p>
                   </div>
                 </label>
@@ -259,7 +242,7 @@ const Checkout = () => {
           </div>
           <form
             onSubmit={formik.handleSubmit}
-            className="mt-10 bg-gray-50 px-4 pt-8 lg:mt-0"
+            className="mt-10 bg-white px-4 pt-5 lg:mt-0 rounded-2xl border"
           >
             <p className="text-xl font-medium">Payment Details</p>
             <p className="text-gray-400">
@@ -450,21 +433,21 @@ const Checkout = () => {
               <div className="mt-6 border-t border-b py-2">
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-medium text-gray-900">Subtotal</p>
-                  <p className="font-semibold text-gray-900">${total}</p>
+                  <p className="font-semibold text-gray-900">₹{total}</p>
                 </div>
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-medium text-gray-900">Tax (18%)</p>
-                  <p className="font-semibold text-gray-900">${tax}</p>
+                  <p className="font-semibold text-gray-900">₹{tax}</p>
                 </div>
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-medium text-gray-900">Shipping</p>
-                  <p className="font-semibold text-gray-900">${shipCharge}</p>
+                  <p className="font-semibold text-gray-900">₹{shipCharge}</p>
                 </div>
               </div>
               <div className="mt-6 flex items-center justify-between">
                 <p className="text-sm font-medium text-gray-900">Total</p>
                 <p className="text-2xl font-semibold text-gray-900">
-                  ${amount}
+                  ₹{amount}
                 </p>
               </div>
             </div>

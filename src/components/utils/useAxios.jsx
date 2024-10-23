@@ -29,6 +29,8 @@ const useAxios = () => {
         setUser(jwtDecode(response.data.access))
 
         req.headers.Authorization = `Bearer ${response.data.access}`
+    
+        return req
     })
     return authAxios
 }

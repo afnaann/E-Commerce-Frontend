@@ -1,21 +1,24 @@
 import React, { useContext, useEffect } from "react";
 import { ErrorMessage, useFormik, yupToFormErrors } from "formik";
 import * as Yup from "yup";
+
 // import  toast  from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import myContext from "../components/context";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
-import { fetchCart } from "../Redux/thunk/thunk";
-// import toast from "react-toastify";
-
+import { fetchCart } from "../../Redux/features/cart/cartThunk";
+import MainContext from "../../context/context";
+import { jwtDecode } from "jwt-decode";
+import useAxios from "../../components/utils/useAxios";
 // import './Registation';
 const Login = () => {
   const navigate = useNavigate();
-  const { isLoggedIn, setLoggedIn, cart, setCart } = useContext(myContext);
-  const logged = localStorage.getItem("credentials");
-  const dispatch = useDispatch()
+  const { setUser, user, setAuthTokens } = useContext(MainContext);
+  const logged = localStorage.getItem("authTokens");
+  const dispatch = useDispatch();
+  const api = useAxios()
+
   useEffect(() => {
     if (logged) {
       navigate("/");
@@ -39,41 +42,41 @@ const Login = () => {
         // .matches(/[0-9]/, "Password must contain at least one number")
         .required("Password is Required"),
     }),
-    onSubmit: (values) => {
+    onSubmit: async (values) => {
       console.log(values);
-      if(values.email== "Lucida@gmail.com" && values.password =="AdminLucida1"){
-        navigate('/admin')
-      }
-      else{
-
-      axios.get("http://localhost:8000/users/").then((result) => {
-        const resp = result.data;
-
-        const user = resp.find(
-          (user) =>
-            user.email === values.email && user.password === values.password
+      try {
+        const response = await axios.post(
+          "http://127.0.0.1:8000/users/login/",
+          values
         );
-        if (user) {
-          localStorage.setItem("id", user.id);
-          const id = localStorage.getItem("id");
+        console.log(response.data);
+        localStorage.setItem("authTokens", JSON.stringify(response.data));
+        setAuthTokens(response.data);
+        const den = jwtDecode(response.data.access);
+        setUser(den);
+        toast.success("Successfully Logged In!");
 
-          toast.success("Login Successful!");
-
-          localStorage.setItem("credentials",JSON.stringify(user));
-
-          setLoggedIn(true);
-
-          dispatch(fetchCart(id))
-          navigate("/");
+        if (den.staff_status) {
+          navigate("/admin");
         } else {
-          toast.error("INVALID CREDENTIALS !");
+          dispatch(fetchCart(den.user_id));
+          navigate("/");
         }
-      });
-    }
-}});
+      } catch (err) {
+        if (err.response.data.non_field_errors){
+          toast.warning(err.response.data.non_field_errors[0])
+        }
+        else{
+          toast.error('Invalid Credentials!')
+        }
+        
+        console.log(err)
+      }
+    },
+  });
 
   return (
-    <div className="h-screen bg-[url('https://img.freepik.com/free-vector/white-abstract-background_23-2148810353.jpg?t=st=1721119708~exp=1721123308~hmac=6e39515514c8a52f2d89b4818058c02b255a2024f184c16e35f2e35dcb4acbd1&w=1380')] bg-cover bg-center  w-full flex justify-center items-center">
+    <div className="h-screen  bg-cover bg-center  w-full flex justify-center items-center gradient">
       <div className="bg-white/10 backdrop-blur-md px-8 py-6 shadow-2xl rounded-xl lg:px-16">
         <form onSubmit={formik.handleSubmit} className="flex flex-col gap-4">
           <h1 className="text-2xl text-center">LOGIN!</h1>
@@ -139,12 +142,11 @@ const Login = () => {
             <p className="text-gray-500">
               Don't Have an Account?
               <span
-                className="text-black"
-                onClick={() => navigate("/registration")}
+                className="text-red-500 hover:cursor-pointer"
+                onClick={() => navigate("/register")}
               >
-                {" "}
                 Go to Signup
-              </span>{" "}
+              </span>
             </p>
           </div>
         </form>

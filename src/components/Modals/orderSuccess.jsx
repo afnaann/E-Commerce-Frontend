@@ -2,14 +2,12 @@ import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useAxios from "../utils/useAxios";
 import { useDispatch } from "react-redux";
-import { fetchOrders } from "../../Redux/features/orders/orderThunk";
 
 function OrderSuccess() {
   const navigate = useNavigate()
   const api = useAxios()
 
   const hasProcessedOrder = useRef(false); 
-  const dispatch = useDispatch()
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const sessionId = params.get("session_id");
@@ -47,7 +45,6 @@ function OrderSuccess() {
             <button
               className="mt-8 inline-block w-full rounded-full bg-pink-600 py-4 text-sm font-bold text-white shadow-xl"
               onClick={() =>{
-                dispatch(fetchOrders)
                 navigate('/')
               }
               } 

@@ -1,11 +1,11 @@
 import React from "react";
 import { ErrorMessage, useFormik, yupToFormErrors } from "formik";
 import * as Yup from "yup";
-import "./Registation";
+import "./Register";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-const Registation = () => {
+const Register = () => {
   const navigate = useNavigate();
   const formik = useFormik({
     initialValues: {
@@ -13,8 +13,6 @@ const Registation = () => {
       email: "",
       password: "",
       confirmPassword: "",
-      cart: [],
-      orders:[]
     },
     validationSchema: Yup.object({
       name: Yup.string()
@@ -35,36 +33,30 @@ const Registation = () => {
     }),
     onSubmit: (values) => {
       console.log(values);
-      axios.get("http://localhost:8000/users")
-      .then((res) => {
-        const datas = res.data;
-        // console.log(datas);
-        const doesMailExists = datas.find(
-          (user) => user.email === values.email
-        );
-        // console.log(doesMailExists)
-        if (doesMailExists) {
-          toast.error("This Email Already Exists!");
-        } else {
-          axios
-            .post("http://localhost:8000/users", values)
-            .then((res) => {
-              toast.success("Registered Successfully! ");
-              navigate("/login");
-            })
-            .catch((err) => {
-              toast.error("Failed " + err.message);
-            });
-        }
-      });
+      axios
+        .post("http://127.0.0.1:8000/users/register/", values)
+        .then((res) => {
+          console.log(res);
+          toast.success("Registered Successfully! ");
+          navigate("/login");
+        })
+        .catch((err) => {
+          console.log(err);
+          if (err.response.data.email) {
+            toast.error("OOPS! " + err.response.data.email);
+          } else {
+            toast.error("Failed!" + err);
+          }
+        });
     },
   });
+
   return (
     <div
-      className="h-screen bg-indigo-50 w-full flex justify-center items-center"
+      className="h-screen gradient w-full flex justify-center items-center "
       id="color"
     >
-      <div className="bg-indigo-100 p-6 py-8 shadow-xl rounded-xl lg:px-16">
+      <div className="bg-white/10 backdrop-blur-md px-8 py-6 shadow-2xl rounded-xl lg:px-16">
         <form onSubmit={formik.handleSubmit} className="flex flex-col gap-4">
           <h1 className="font-medium">SIGNUP!</h1>
           <div>
@@ -172,7 +164,7 @@ const Registation = () => {
           <div>
             <p className="text-gray-500">
               Already Have an Account?
-              <span className="text-black" onClick={() => navigate("/login")}>
+              <span className="text-red-500 hover:cursor-pointer" onClick={() => navigate("/login")}>
                 {" "}
                 Go to Login
               </span>{" "}
@@ -184,4 +176,4 @@ const Registation = () => {
   );
 };
 
-export default Registation;
+export default Register;

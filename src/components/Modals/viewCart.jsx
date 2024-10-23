@@ -1,6 +1,6 @@
 import React from "react";
 
-function ViewCart({ cart, setIsVisible, userName , isModalVisible}) {
+function ViewCart({ cart, setIsVisible , isModalVisible}) {
 if(!isModalVisible){
   return null
 } 
@@ -34,14 +34,13 @@ console.log(cart)
             />
           </svg>
         </button>
-        {/* //add username here */}
-        <h2> My Cart</h2> 
+        <h2>Products</h2> 
         <div className="mt-4 space-y-6">
           <ul className="space-y-4 max-h-[32rem] overflow-auto">
             {!cart? (
               <h2 className="text-red-500">Cart Is Empty!</h2>
             ) : (
-              cart.map((item, id) => (
+              cart?.map((item, id) => (
                 <li className="flex items-center gap-4" key={id}>
                   <img
                     src={`data:image/jpeg;base64,${item.product.Image_base64}`}
@@ -49,11 +48,11 @@ console.log(cart)
                     className="w-32 h-32 rounded object-cover"
                   />
                   <div>
-                    <h3 className="text-md text-gray-900">{item.name}</h3>
+                    <h3 className="text-md text-gray-900">{item.product.name}</h3>
                     <dl className="mt-0.5 space-y-px text-sm text-gray-600">
                       <div>
-                        <dt className="inline">Color: </dt>
-                        <dd className="inline">Colourful</dd>
+                        <dt className="inline">Category: </dt>
+                        <dd className="inline">{item.product.category.name}</dd>
                       </div>
                       <div>
                         <dt className="inline">Price: </dt>
