@@ -13,7 +13,7 @@ function EditProduct({ id, setIsVisible }) {
   useEffect(() => {
     if (id) {
       axios
-        .get(`http://127.0.0.1:8000/products/get/${id}/`)
+        .get(`http://3.110.45.58/products/get/${id}/`)
         .then((res) => {
           setInitialValues({
             name: res.data.name,
@@ -80,7 +80,7 @@ function EditProduct({ id, setIsVisible }) {
     }
   
     api
-      .patch(`http://127.0.0.1:8000/products/update/${id}/`, formData, {
+      .patch(`/products/update/${id}/`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

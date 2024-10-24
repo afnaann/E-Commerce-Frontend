@@ -7,7 +7,7 @@ export const fetchCart = createAsyncThunk(
   async ({ userId, api }) => {
     try {
       const response = await api.get(
-        `http://127.0.0.1:8000/cart/get/${userId}/`
+        `http://3.110.45.58/cart/get/${userId}/`
       );
       return response.data;
     } catch (error) {

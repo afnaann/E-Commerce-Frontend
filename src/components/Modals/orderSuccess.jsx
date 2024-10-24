@@ -16,7 +16,7 @@ function OrderSuccess() {
     const processOrder = async () => {
       try {
         const response = await api.get(
-          `http://127.0.0.1:8000/api/stripe/processorder/?session_id=${sessionId}`
+          `http://3.110.45.58/api/stripe/processorder/?session_id=${sessionId}`
         );
       } catch (error) {
         toast.error('Something went wrong! Order Unsuccessful!')

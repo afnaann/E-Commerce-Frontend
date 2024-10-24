@@ -14,7 +14,7 @@ const ProductForm = ({ initialValues, onSubmit, formType }) => {
     const getCategory = async () => {
       try {
         const response = await axios.get(
-          "http://127.0.0.1:8000/products/category/get/"
+          "http://3.110.45.58/products/category/get/"
         );
         const formattedCategories = response.data.map((category) => ({
           value: category.id,
