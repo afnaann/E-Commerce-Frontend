@@ -1,4 +1,4 @@
-import { Fragment, useContext, useState } from "react";
+import { Fragment, useContext, useEffect, useState } from "react";
 import { Dialog, DialogPanel } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -7,17 +7,26 @@ import { HiOutlineShoppingCart } from "react-icons/hi2";
 import picture from "../../assets/Guest1.png";
 import fav from "../../assets/favic.png";
 import UserProfile from "../../pages/UserPanel/UserProfile";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import MainContext from "../../context/context";
+import { fetchCart } from "../../Redux/features/cart/cartThunk";
+import useAxios from "../utils/useAxios";
 
 export default function Navbar() {
   const cart = useSelector((state) => state.cart.items);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isModalOpen,setIsModalOpen] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const { user } = useContext(MainContext);
-  
+  const api = useAxios();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    if (user) {
+      dispatch(fetchCart({ userId: user.user_id, api: api }));
+    }
+  }, []);
 
   return (
     <header className="bg-customColor">
@@ -114,7 +123,7 @@ export default function Navbar() {
               to={"/login"}
               className="text-sm font-semibold leading-6 text-gray-900 bg-indigo-400 shadow-2xl py-1 px-4 rounded-md hover:bg-indigo-600"
             >
-                LogIn
+              LogIn
             </Link>
           )}
         </div>

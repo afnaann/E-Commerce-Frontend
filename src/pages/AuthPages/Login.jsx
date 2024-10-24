@@ -1,9 +1,7 @@
 import React, { useContext, useEffect } from "react";
-import { ErrorMessage, useFormik, yupToFormErrors } from "formik";
+import {  useFormik } from "formik";
 import * as Yup from "yup";
 
-// import  toast  from "react-hot-toast";
-import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
@@ -11,7 +9,8 @@ import { fetchCart } from "../../Redux/features/cart/cartThunk";
 import MainContext from "../../context/context";
 import { jwtDecode } from "jwt-decode";
 import useAxios from "../../components/utils/useAxios";
-// import './Registation';
+import { useNavigate } from "react-router-dom";
+
 const Login = () => {
   const navigate = useNavigate();
   const { setUser, user, setAuthTokens } = useContext(MainContext);
@@ -57,7 +56,7 @@ const Login = () => {
         if (den.staff_status) {
           navigate("/admin");
         } else {
-          dispatch(fetchCart(den.user_id));
+          dispatch(fetchCart({userId:den.user_id,api:api}));
           navigate("/");
         }
       } catch (err) {

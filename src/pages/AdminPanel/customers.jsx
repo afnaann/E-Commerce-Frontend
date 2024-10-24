@@ -1,9 +1,6 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { toast } from "react-toastify";
 import useAxios from "../../components/utils/useAxios"
 import ViewCart from "../../components/Modals/viewCart";
-import ViewOrders from "../../components/Modals/viewOrders";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCart } from "../../Redux/features/cart/cartThunk";
 import { blockUsers, fetchUsers } from "../../Redux/features/users/usersThunk";
@@ -11,7 +8,6 @@ import { blockUsers, fetchUsers } from "../../Redux/features/users/usersThunk";
 const Customers = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [userName, setUserName] = useState("");
-  const [isOrdersVisible, setIsOrdersVisible] = useState(false);
   const api = useAxios()
   const dispatch = useDispatch();
 
@@ -24,7 +20,8 @@ const Customers = () => {
 
 
   const cartView = (userId) => {
-    dispatch(fetchCart(userId));
+    
+    dispatch(fetchCart({userId:userId, api:api}));
     setIsModalVisible(true);
   };
 
@@ -90,7 +87,6 @@ const Customers = () => {
         </table>
       </div>
 
-      {/* <CartModal isVisible={isModalVisible}> */}
       <ViewCart
         cart={cart}
         setIsVisible={setIsModalVisible}

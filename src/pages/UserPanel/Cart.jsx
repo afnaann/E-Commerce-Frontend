@@ -1,6 +1,6 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
 
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCart, UpdateQuantity } from "../../Redux/features/cart/cartThunk";
@@ -20,8 +20,9 @@ export default function Cart() {
   useEffect(() => {
     if (!user) {
       navigate("/");
+    } else {
+      dispatch(fetchCart({ userId: user.user_id, api: api }));
     }
-    dispatch(fetchCart(user.user_id));
   }, []);
 
   const updateCount = (productId, newQuantity) => {
@@ -42,7 +43,7 @@ export default function Cart() {
   const paymentFunction = async () => {
     try {
       const response = await api.post("/api/stripe/checkoutsession/", {
-        cart: cart
+        cart: cart,
       });
 
       if (response.status == 200) {
@@ -54,14 +55,13 @@ export default function Cart() {
       }
     } catch (err) {
       toast.warning("something Went Wrong! Try Again");
-      console.error('error occured',err)
+      console.error("error occured", err);
     }
   };
 
-  if (!cart || cart.length== 0){ 
+  if (!cart || cart.length == 0) {
     return null;
   }
-
 
   return (
     <div className="font-sans max-w-4xl max-md:max-w-xl mx-auto p-4">
@@ -170,7 +170,6 @@ export default function Cart() {
               <span>Shipping</span>
               <span>Free</span>
             </div>
-
           </div>
           <div className="flex justify-between items-center font-bold text-base text-gray-800 mt-6">
             <span>Total</span>

@@ -1,9 +1,9 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-export const fetchCart = createAsyncThunk("cart/fetchCart", async (userId) => {
+export const fetchCart = createAsyncThunk("cart/fetchCart", async ({userId,api}) => {
   try {
-    const response = await axios.get(
+    const response = await api.get(
       `http://127.0.0.1:8000/cart/get/${userId}/`
     );
     return response.data;
