@@ -3,7 +3,7 @@ import { updateOrder,fetchAllOrders, fetchOrders } from "./orderThunk";
 
 
 const initialState = {
-    items: []
+    items: [],
 }
 
 const orderSlice = createSlice({

@@ -55,7 +55,6 @@ export default function Cart() {
       }
     } catch (err) {
       toast.warning("something Went Wrong! Try Again");
-      console.error("error occured", err);
     }
   };
 

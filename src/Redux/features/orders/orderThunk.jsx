@@ -6,8 +6,8 @@ export const fetchOrders = createAsyncThunk('orders/fetchOrders', async ({userId
   try {
     const response = await api.get(`/orders/get/${userId}`);
     return response.data
-  } catch (error) {
-    console.error("Error fetching user orders:", error);
+  } catch (err) {
+    return rejectWithValue(err.response ? err.response.data : err.message);
   }
 })
 
@@ -17,7 +17,7 @@ export const fetchAllOrders = createAsyncThunk('orders/fetchAllOrders', async (a
     const response = await api.get('/orders/get/');
     return response.data
   } catch (err) {
-    console.error('failed fetching. ', err)
+    return rejectWithValue(err.response ? err.response.data : err.message);
   }
 })
 
@@ -31,7 +31,6 @@ export const updateOrder = createAsyncThunk(
       });
       return response.data; 
     } catch (err) {
-      console.error(err);
       return rejectWithValue(err.response ? err.response.data : err.message);
     }
   }

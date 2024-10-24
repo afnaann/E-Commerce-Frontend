@@ -67,7 +67,6 @@ const Login = () => {
           toast.error('Invalid Credentials!')
         }
         
-        console.error(err)
       }
     },
   });

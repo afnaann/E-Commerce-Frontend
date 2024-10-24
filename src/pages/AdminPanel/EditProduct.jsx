@@ -24,26 +24,23 @@ function EditProduct({ id, setIsVisible }) {
           });
         })
         .catch((err) => {
-          console.error("Error Fetching!",err);
+          toast.error("Error Fetching!");
         });
     }
   }, [id]);
 
   const base64ToFile = (base64, filename) => {
     if (!base64) {
-      console.error("Base64 string is null or undefined");
       return null; // or handle the error as needed
     }
     
     const arr = base64.split(',');
     if (arr.length < 2) {
-      console.error("Invalid base64 string format");
       return null; // or handle the error as needed
     }
   
     const mime = arr[0].match(/:(.*?);/);
     if (!mime) {
-      console.error("MIME type is missing from base64 string");
       return null; // or handle the error as needed
     }
   
@@ -70,19 +67,16 @@ function EditProduct({ id, setIsVisible }) {
   
     if (values.image) {
       if (values.image instanceof File) {
-        // New image uploaded
         formData.append("image", values.image);
       } else {
-        // Existing base64 image
         const file = base64ToFile(values.image, "existing-image.jpg");
         if (file) {
           formData.append("image", file);
         } else {
-          console.error("Failed to convert base64 to file.");
         }
       }
     } else {
-      console.warn("No image provided, skipping image upload.");
+      toast.warn("No image provided, skipping image upload.");
     }
   
     api
@@ -98,7 +92,6 @@ function EditProduct({ id, setIsVisible }) {
 
       })
       .catch((err) => {
-        console.error(err);
         toast.error("Error Updating Data");
       });
   };

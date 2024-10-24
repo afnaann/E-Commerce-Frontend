@@ -39,7 +39,6 @@ const Register = () => {
           navigate("/login");
         })
         .catch((err) => {
-          console.error(err);
           if (err.response.data.email) {
             toast.error("OOPS! " + err.response.data.email);
           } else {

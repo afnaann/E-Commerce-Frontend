@@ -10,8 +10,8 @@ export const fetchProducts = createAsyncThunk(
         const response = await axios.get("http://127.0.0.1:8000/products/get/");
   
         return response.data;
-      } catch (error) {
-        console.error(error);
+      } catch (err) {
+        return rejectWithValue(err.response ? err.response.data : err.message);
       }
     }
   );
@@ -27,9 +27,8 @@ export const fetchProducts = createAsyncThunk(
         })
         return response.data
       }
-      catch(error){
-        console.error(error)
-        // toast.error('Error Uploading Product')
+      catch(err){
+        return rejectWithValue(err.response ? err.response.data : err.message);
       }
     }
   )

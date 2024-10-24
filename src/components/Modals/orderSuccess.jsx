@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useAxios from "../utils/useAxios";
 import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
 
 function OrderSuccess() {
   const navigate = useNavigate()
@@ -18,8 +19,8 @@ function OrderSuccess() {
           `http://127.0.0.1:8000/api/stripe/processorder/?session_id=${sessionId}`
         );
       } catch (error) {
-        console.error("Error processing order:", error);
-      }
+        toast.error('Something went wrong! Order Unsuccessful!')
+        }
     };
 
     if (sessionId && !hasProcessedOrder.current) {

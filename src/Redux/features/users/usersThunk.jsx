@@ -6,8 +6,8 @@ export const fetchUsers = createAsyncThunk('users/fetchUsers', async (api)=> {
       const response = await api.get('/users/get/');
       return response.data
     }
-    catch(error){
-      console.error(error)
+    catch(err){
+      return rejectWithValue(err.response ? err.response.data : err.message);
     }
   })
 
@@ -18,6 +18,6 @@ export const blockUsers = createAsyncThunk('user/blockUser', async ({api,id})=> 
     return response.data
   }
   catch(err){
-    console.error(err)
+    return rejectWithValue(err.response ? err.response.data : err.message);
   }
 })
