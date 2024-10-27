@@ -15,7 +15,7 @@ function DeleteModal({ isVisible, setIsVisible, products, delId }) {
   const deleteProduct = (id) => {
     setIsVisible(false);
     api
-      .delete(`http://3.110.45.58/products/delete/${id}/`)
+      .delete(`http://127.0.0.1:8000/products/delete/${id}/`)
       .then((res) => {
         if (res.status === 204) {
           toast.success("Removed Product Successfully");

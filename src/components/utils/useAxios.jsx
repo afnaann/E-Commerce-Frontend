@@ -5,7 +5,7 @@ import dayjs from "dayjs";
 import {jwtDecode} from "jwt-decode"
 
 
-let baseURL = 'http://3.110.45.58';
+let baseURL = 'http://127.0.0.1:8000';
 
 const useAxios = () => {
     const {authTokens,setAuthTokens,user,setUser} = useContext(MainContext)
