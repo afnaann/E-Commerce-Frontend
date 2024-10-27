@@ -13,7 +13,7 @@ function EditProduct({ id, setIsVisible }) {
   useEffect(() => {
     if (id) {
       axios
-        .get(`http://3.110.45.58/products/get/${id}/`)
+        .get(`http://127.0.0.1:8000/products/get/${id}/`)
         .then((res) => {
           setInitialValues({
             name: res.data.name,

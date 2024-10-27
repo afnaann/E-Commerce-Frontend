@@ -33,7 +33,7 @@ const Register = () => {
     }),
     onSubmit: (values) => {
       axios
-        .post("http://3.110.45.58/users/register/", values)
+        .post("http://127.0.0.1:8000/users/register/", values)
         .then((res) => {
           toast.success("Registered Successfully! ");
           navigate("/login");

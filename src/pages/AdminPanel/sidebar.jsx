@@ -140,7 +140,7 @@ const AdminSidebar = () => {
                 isLocked ? "text-gray-500" : "text-gray-800"
               }`}
             >
-              Settings
+              Staff Overview
             </span>
           </Link>
 

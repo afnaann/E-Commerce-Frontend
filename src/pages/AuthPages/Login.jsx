@@ -44,7 +44,7 @@ const Login = () => {
     onSubmit: async (values) => {
       try {
         const response = await axios.post(
-          "http://3.110.45.58/users/login/",
+          "http://127.0.0.1:8000/users/login/",
           values
         );
         localStorage.setItem("authTokens", JSON.stringify(response.data));
